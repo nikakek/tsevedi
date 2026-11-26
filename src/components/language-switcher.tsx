@@ -27,9 +27,9 @@ function Links({ locale }: { locale: Locale }) {
       lang={l}
       aria-current={l === locale ? "true" : undefined}
       title={LOCALE_LABELS[l]}
-      className="rounded-md px-2 py-1 text-xs font-semibold uppercase text-muted aria-[current]:bg-ink aria-[current]:text-white hover:text-ink aria-[current]:hover:text-white"
+      className="rounded-md px-2 py-1 text-xs font-semibold text-muted aria-[current]:bg-ink aria-[current]:text-white hover:text-ink aria-[current]:hover:text-white"
     >
-      {l === "ka" ? "ქა" : l === "ru" ? "ру" : "en"}
+      {l === "ka" ? "ქა" : l === "ru" ? "РУ" : "EN"}
     </Link>
   ));
 }

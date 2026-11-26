@@ -94,7 +94,7 @@ const ka: Dictionary = {
     from: "გადის",
     openMap: "რუკაზე ნახვა",
     stops: "მარშრუტი",
-    via: "{stops}-ის გავლით",
+    via: "გზად: {stops}",
     callAhead: "ადგილის დასაჯავშნად დარეკე წინა დღით",
     languages: "მძღოლი ლაპარაკობს",
     vehicle: "მანქანა",
