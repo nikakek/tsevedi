@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: tsevedi-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tsevedi
+      POSTGRES_PASSWORD: tsevedi
+      POSTGRES_DB: tsevedi
+    ports:
+      - "5432:5432"
+    volumes:
+      - tsevedi-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tsevedi"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  tsevedi-db:
