@@ -20,7 +20,7 @@ export default defineConfig({
   webServer: {
     // CI runs against a production build; locally an already running `npm run dev` is reused.
     command: process.env.CI ? `npm run start -- --port ${port}` : `npm run dev -- --port ${port}`,
-    env: { DISABLE_RATE_LIMIT: "1" },
+    env: { DISABLE_RATE_LIMIT: "1", ENABLE_TEST_AUTH: "1" },
     url: `${baseURL}/en`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

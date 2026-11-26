@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { cleanupDrivers, db } from "./helpers";
+import { adminSignIn, cleanupDrivers, cleanupUsers, db, signIn, uniqueEmail } from "./helpers";
 
 /**
  * The core loop of the product: someone adds a route → the admin approves it after a phone call →
@@ -8,16 +8,20 @@ import { cleanupDrivers, db } from "./helpers";
 test.describe.configure({ mode: "serial" });
 
 const PREFIX = "E2E Driver";
+const EMAIL_PREFIX = "e2e-flow-";
 let driverName: string;
 let phoneDigits: string;
+let email: string;
 
 test.beforeAll(async ({}, testInfo) => {
   driverName = `${PREFIX} ${testInfo.project.name} ${Date.now()}`;
   phoneDigits = `599${String(Date.now()).slice(-6)}`;
+  email = uniqueEmail(EMAIL_PREFIX, testInfo.project.name);
 });
 
 test.afterAll(async () => {
   await cleanupDrivers(driverName);
+  await cleanupUsers(email);
   await db.$disconnect();
 });
 
@@ -31,8 +35,13 @@ async function pickPlace(page: Page, label: string, query: string, option: strin
     .click();
 }
 
-test("a visitor can submit a route", async ({ page }) => {
-  await page.goto("/en/add?from=tbilisi&to=oni");
+test("adding a route requires an account", async ({ page }) => {
+  await page.goto("/en/add");
+  await expect(page.getByRole("heading", { name: "Sign in to continue" })).toBeVisible();
+});
+
+test("a signed-in visitor can submit a route", async ({ page }) => {
+  await signIn(page, email, "/en/add?from=tbilisi&to=oni");
   await expect(page.getByRole("combobox", { name: "Starts in" })).toHaveValue("Tbilisi");
   await expect(page.getByRole("combobox", { name: "Goes to" })).toHaveValue("Oni");
 
@@ -57,7 +66,7 @@ test("a visitor can submit a route", async ({ page }) => {
 });
 
 test("invalid submissions show translated field errors", async ({ page }) => {
-  await page.goto("/ru/add");
+  await signIn(page, email, "/ru/add");
   await page.getByRole("button", { name: "Отправить маршрут" }).click();
   await expect(page.getByText("Выберите, откуда и куда идёт маршрут")).toBeVisible();
   await expect(page.getByText("Введите правильный номер телефона")).toBeVisible();
@@ -70,9 +79,7 @@ test("the admin approves the route", async ({ page }) => {
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page.getByText("Wrong password.")).toBeVisible();
 
-  await page.getByLabel("Password").fill(process.env.ADMIN_PASSWORD!);
-  await page.getByRole("button", { name: "Sign in" }).click();
-  await expect(page.getByRole("heading", { name: "Tsevedi admin" })).toBeVisible();
+  await adminSignIn(page);
 
   const card = page.getByRole("listitem").filter({ hasText: driverName });
   await expect(card).toContainText("Tbilisi → Ambrolauri → Oni");
@@ -125,7 +132,7 @@ test("stops along the way and the place page link to the listing", async ({ page
 });
 
 test("a traveller reports a ride and switches language", async ({ page }) => {
-  await page.goto("/en/routes/tbilisi/oni");
+  await signIn(page, email, "/en/routes/tbilisi/oni");
   await page
     .getByRole("article")
     .filter({ hasText: driverName })
@@ -138,7 +145,7 @@ test("a traveller reports a ride and switches language", async ({ page }) => {
   await page.getByRole("button", { name: "Send report" }).click();
   await expect(page.getByText("Thank you! Your report helps the next traveller.")).toBeVisible();
 
-  await page.locator("summary[aria-label=Language]").first().click();
+  await page.locator("summary[aria-label=Language]:visible").first().click();
   await page.getByRole("link", { name: "ქართული" }).first().click();
   await expect(page).toHaveURL(/\/ka\/listings\//);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("თბილისი → ონი");

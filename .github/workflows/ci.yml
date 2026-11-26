@@ -50,6 +50,7 @@ jobs:
       SESSION_SECRET: ci-session-secret-that-is-long-enough-123
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
       DISABLE_RATE_LIMIT: "1"
+      ENABLE_TEST_AUTH: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

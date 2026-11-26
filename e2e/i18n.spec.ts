@@ -26,7 +26,7 @@ test("dark mode survives switching language and reloading", async ({ page }) => 
   await page.getByRole("button", { name: /dark mode/i }).click();
   await expect(html).toHaveAttribute("data-theme", "dark");
 
-  await page.locator("summary[aria-label=Language]").first().click();
+  await page.locator("summary[aria-label=Language]:visible").first().click();
   await page.getByRole("link", { name: "ქართული" }).first().click();
   await expect(page).toHaveURL(/\/ka\/places\/ambrolauri$/);
   await expect(html).toHaveAttribute("data-theme", "dark");
