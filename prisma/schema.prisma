@@ -1,0 +1,180 @@
+// Tsevedi data model.
+//
+// A Listing is one regular trip a driver runs, e.g. "Tbilisi → Ambrolauri → Oni, daily at 09:00".
+// Its ordered RouteStops let a search for any two places along the way find it.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PlaceKind {
+  CITY
+  TOWN
+  VILLAGE
+  RESORT
+  AIRPORT
+  BORDER
+}
+
+enum VehicleType {
+  MARSHRUTKA
+  MINIVAN
+  SEDAN
+  SUV
+  BUS
+}
+
+enum Language {
+  KA
+  RU
+  EN
+  TR
+  HY
+  AZ
+}
+
+enum ListingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+
+enum RideOutcome {
+  WORKED
+  DIFFERENT
+  DID_NOT_RUN
+}
+
+enum ProblemKind {
+  WRONG_TIME
+  WRONG_PRICE
+  NOT_RUNNING
+  WRONG_PHONE
+  OTHER
+}
+
+model Place {
+  id      String    @id @default(cuid())
+  slug    String    @unique
+  nameKa  String
+  nameEn  String
+  nameRu  String
+  /// Extra spellings people search for: "Kazbegi", "Qvareli", "TBS", ...
+  aliases String[]
+  region  String
+  kind    PlaceKind
+  lat     Float
+  lng     Float
+
+  stops RouteStop[]
+}
+
+model Driver {
+  id           String      @id @default(cuid())
+  name         String
+  /// E.164 format, e.g. +995555123456
+  phone        String
+  whatsapp     Boolean     @default(false)
+  viber        Boolean     @default(false)
+  telegram     Boolean     @default(false)
+  languages    Language[]
+  vehicleType  VehicleType
+  vehicleModel String?
+  vehicleColor String?
+  plate        String?
+  seats        Int?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  listings Listing[]
+
+  @@index([phone])
+}
+
+model Listing {
+  id       String @id @default(cuid())
+  driverId String
+  driver   Driver @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  stops RouteStop[]
+
+  /// Local Georgian time, "HH:MM".
+  departureTime    String
+  /// ISO weekdays the trip runs: 1 = Monday ... 7 = Sunday.
+  days             Int[]
+  /// Months the trip runs (1-12). Empty means all year.
+  activeMonths     Int[]
+  departurePoint   String
+  departureMapsUrl String?
+  /// Departure time of the trip back from the last stop, if the driver returns the same way.
+  returnTime       String?
+  returnPoint      String?
+
+  /// Prices in GEL.
+  pricePerSeat      Int?
+  priceWholeVehicle Int?
+  largeLuggage      Boolean?
+  callAhead         Boolean  @default(true)
+  notes             String?
+
+  status           ListingStatus @default(PENDING)
+  submittedByDriver Boolean      @default(false)
+  submitterContact String?
+  adminNote        String?
+  lastConfirmedAt  DateTime?
+  approvedAt       DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  rideReports    RideReport[]
+  problemReports ProblemReport[]
+
+  @@index([status])
+  @@index([driverId])
+}
+
+model RouteStop {
+  id        String  @id @default(cuid())
+  listingId String
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  placeId   String
+  place     Place   @relation(fields: [placeId], references: [id])
+  position  Int
+
+  @@unique([listingId, position])
+  @@index([placeId])
+}
+
+/// "I took this ride" reports from travellers keep listings fresh without the admin calling every driver.
+model RideReport {
+  id         String      @id @default(cuid())
+  listingId  String
+  listing    Listing     @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  travelDate DateTime    @db.Date
+  outcome    RideOutcome
+  departedAt String?
+  pricePaid  Int?
+  comment    String?
+  hidden     Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+
+  @@index([listingId, hidden])
+}
+
+model ProblemReport {
+  id        String      @id @default(cuid())
+  listingId String
+  listing   Listing     @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  kind      ProblemKind
+  message   String?
+  resolved  Boolean     @default(false)
+  createdAt DateTime    @default(now())
+
+  @@index([resolved])
+}
