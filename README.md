@@ -56,6 +56,10 @@ villages.
 - **Responsive layouts.** Full width with sidebars on desktop; a stacked search bar and a bottom tab bar on phones.
 - **Trilingual and SEO-ready.** `/ka`, `/en`, `/ru` with browser language detection, hreflang alternates, a sitemap
   of every route page and Open Graph images.
+- **Accounts with Google or Facebook.** Travellers save drivers and trips to their profile. Adding routes and
+  reporting rides needs an account, so spam can be traced and banned.
+- **Driver accounts.** Drivers register, the admin approves them after a phone call, and from then on they publish
+  and update their own routes instantly. Existing listings with the same phone number are linked on approval.
 - **Moderation dashboard** with tap-to-call verification, a freshness queue, an editor, and problem and ride-report
   moderation.
 - **Public REST API** for the upcoming React Native app ([docs/API.md](docs/API.md)).
@@ -135,6 +139,30 @@ Open http://localhost:3000. The moderation dashboard is at http://localhost:3000
 | `npm run db:migrate` / `db:seed`        | Create/apply migrations, seed places              |
 | `npm run db:studio`                     | Browse the database in Prisma Studio              |
 
+## Sign-in setup (Google and Facebook)
+
+Sign-in buttons appear only for providers whose keys are set. Use your site's address in place of
+`https://YOUR-SITE` (and `http://localhost:3000` for local development).
+
+**Google** ([Google Cloud Console](https://console.cloud.google.com/apis/credentials)):
+
+1. Create a project, then **APIs & Services → OAuth consent screen**: app name, support email, and links to
+   `https://YOUR-SITE/en/privacy`. Publish the app when ready.
+2. **Credentials → Create credentials → OAuth client ID → Web application**.
+3. Authorized redirect URI: `https://YOUR-SITE/api/auth/callback/google`.
+4. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
+
+**Facebook** ([Meta for Developers](https://developers.facebook.com/apps)):
+
+1. Create an app with the **Facebook Login** use case.
+2. In Facebook Login settings, add the valid OAuth redirect URI `https://YOUR-SITE/api/auth/callback/facebook`.
+3. In App settings → Basic, set the privacy policy URL `https://YOUR-SITE/en/privacy` and the data deletion
+   instructions URL `https://YOUR-SITE/en/privacy#deletion`.
+4. Set `FACEBOOK_CLIENT_ID` (App ID) and `FACEBOOK_CLIENT_SECRET` (App secret), then switch the app to **Live**.
+
+Instagram sign-in isn't offered: Meta no longer allows personal Instagram accounts to sign in to websites, and
+Facebook Login covers the same people.
+
 ## Deployment
 
 Any Node.js host with PostgreSQL works, for example [Netlify](https://netlify.com) or [Vercel](https://vercel.com)
@@ -142,7 +170,7 @@ with a free [Neon](https://neon.tech) database.
 
 1. Create a PostgreSQL database and copy its connection string (on Neon, use the pooled one).
 2. In the host's environment variables, set `DATABASE_URL`, `ADMIN_PASSWORD`, `SESSION_SECRET`
-   (`openssl rand -base64 32`) and `NEXT_PUBLIC_SITE_URL` (your site's URL).
+   (`openssl rand -base64 32`), `NEXT_PUBLIC_SITE_URL` (your site's URL) and the sign-in keys above.
 3. Deploy. The build command `npm run build:deploy` (preconfigured for Netlify in `netlify.toml`) applies
    migrations, seeds places and builds. The database must be reachable at build time because pages are prerendered.
 

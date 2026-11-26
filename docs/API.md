@@ -28,9 +28,16 @@ or
 | Status | Code                | When                                  |
 | ------ | ------------------- | ------------------------------------- |
 | 400    | `bad_request`       | Missing or malformed query parameters |
+| 401    | `unauthorized`      | Write endpoint called without sign-in |
 | 404    | `not_found`         | Unknown place or listing              |
 | 422    | `validation_failed` | Body failed validation                |
 | 429    | `rate_limited`      | Too many write requests from your IP  |
+
+## Authentication
+
+Reading is public. Writing (`POST`) requires a signed-in, non-banned account. The website uses its session cookie;
+apps send `Authorization: Bearer <token>`, using the token returned by Better Auth's sign-in endpoints under
+`/api/auth` (`set-auth-token` response header).
 
 ## Places
 
