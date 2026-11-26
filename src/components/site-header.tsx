@@ -6,6 +6,7 @@ import { LanguageSwitcher } from "./language-switcher";
 import { Logo } from "./logo";
 import { HeaderNav, TabBar } from "./nav-links";
 import { ThemeToggle } from "./theme";
+import { AccountMenu } from "./account-menu";
 
 export function SiteHeader({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const labels = {
@@ -13,6 +14,7 @@ export function SiteHeader({ locale, dict }: { locale: Locale; dict: Dictionary 
     map: dict.nav.map,
     add: dict.nav.add,
     about: dict.nav.about,
+    account: dict.nav.account,
     short: { map: dict.nav.mapShort, add: dict.nav.addShort, about: dict.nav.aboutShort },
   };
   return (
@@ -32,7 +34,18 @@ export function SiteHeader({ locale, dict }: { locale: Locale; dict: Dictionary 
               <ThemeToggle
                 labels={{ toLight: dict.nav.themeToLight, toDark: dict.nav.themeToDark }}
               />
-              <LanguageSwitcher locale={locale} label={dict.nav.language} />
+              <div className="hidden sm:block">
+                <LanguageSwitcher locale={locale} label={dict.nav.language} />
+              </div>
+              <AccountMenu
+                locale={locale}
+                labels={{
+                  signIn: dict.nav.signIn,
+                  account: dict.nav.account,
+                  driverArea: dict.nav.driverArea,
+                  signOut: dict.nav.signOut,
+                }}
+              />
             </div>
           </div>
         </div>

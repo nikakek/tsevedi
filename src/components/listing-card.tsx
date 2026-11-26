@@ -23,6 +23,7 @@ import { formatDays, formatMonths } from "@/lib/schedule";
 import type { ListingView, PlaceSummary } from "@/server/queries";
 import { FreshnessBadge } from "./freshness-badge";
 import { PhraseCardButton, type PhraseCardContent } from "./phrase-card";
+import { SaveButton } from "./saved";
 
 type Props = {
   listing: ListingView;
@@ -162,6 +163,7 @@ export function ListingCard({
   const months = formatMonths(listing.activeMonths, locale);
   const { driver } = listing;
   const vehicle = [driver.vehicleColor, driver.vehicleModel].filter(Boolean).join(" ");
+  const signInHref = paths.signIn(locale, paths.listing(locale, listing.id));
 
   return (
     <article className={`card overflow-hidden ${dimmed ? "opacity-60" : ""}`}>
@@ -209,18 +211,26 @@ export function ListingCard({
             )}
           </div>
         </div>
-        <div className="text-right">
-          {listing.pricePerSeat !== null ? (
-            <>
-              <div className="text-2xl font-semibold tracking-tight">
-                {listing.pricePerSeat}
-                <span className="ml-0.5 text-lg">{dict.listing.gel}</span>
-              </div>
-              <div className="text-muted text-xs">{dict.listing.perSeat}</div>
-            </>
-          ) : (
-            <div className="text-muted text-sm">{dict.listing.priceUnknown}</div>
-          )}
+        <div className="flex items-start gap-3">
+          <div className="text-right">
+            {listing.pricePerSeat !== null ? (
+              <>
+                <div className="text-2xl font-semibold tracking-tight">
+                  {listing.pricePerSeat}
+                  <span className="ml-0.5 text-lg">{dict.listing.gel}</span>
+                </div>
+                <div className="text-muted text-xs">{dict.listing.perSeat}</div>
+              </>
+            ) : (
+              <div className="text-muted text-sm">{dict.listing.priceUnknown}</div>
+            )}
+          </div>
+          <SaveButton
+            type="listing"
+            id={listing.id}
+            labels={{ save: dict.save.saveTrip, saved: dict.save.savedTrip }}
+            signInHref={signInHref}
+          />
         </div>
       </div>
 
@@ -242,7 +252,7 @@ export function ListingCard({
             </span>
           </p>
         )}
-        <p className="text-muted">
+        <p className="text-muted flex flex-wrap items-center gap-x-1">
           <span className="text-ink font-medium">{driver.name}</span>
           {driver.languages.length > 0 && (
             <> · {driver.languages.map((l) => dict.language[l]).join(", ")}</>
@@ -254,6 +264,13 @@ export function ListingCard({
               · <span className="font-mono">{driver.plate}</span>
             </>
           )}
+          <SaveButton
+            type="driver"
+            id={driver.id}
+            labels={{ save: dict.save.saveDriver, saved: dict.save.savedDriver }}
+            signInHref={signInHref}
+            variant="text"
+          />
         </p>
         {listing.callAhead && <p className="text-warn-fg">{dict.listing.callAhead}</p>}
         <FreshnessBadge

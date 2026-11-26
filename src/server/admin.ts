@@ -7,6 +7,7 @@ import { UnknownPlaceError } from "./mutations";
 
 const adminInclude = {
   driver: true,
+  submittedBy: { select: { id: true, name: true, email: true, banned: true } },
   stops: {
     orderBy: { position: "asc" },
     include: { place: { select: { slug: true, nameEn: true, nameKa: true } } },
@@ -45,12 +46,13 @@ export async function listListings(status: ListingStatus) {
 }
 
 export async function getCounts() {
-  const [pending, approved, problems] = await Promise.all([
+  const [pending, approved, problems, drivers] = await Promise.all([
     db.listing.count({ where: { status: "PENDING" } }),
     db.listing.count({ where: { status: "APPROVED" } }),
     db.problemReport.count({ where: { resolved: false } }),
+    db.driver.count({ where: { status: "PENDING" } }),
   ]);
-  return { pending, approved, problems };
+  return { pending, approved, problems, drivers };
 }
 
 /** Phones of pending submissions that already belong to a driver with approved listings. */
@@ -183,4 +185,121 @@ export async function updateListing(id: string, input: ListingSubmission & { adm
       },
     }),
   ]);
+}
+
+// --- Driver registrations ---------------------------------------------------------------------
+
+/** Drivers who registered with their own account, newest first, with listings that would be merged. */
+export async function listDriverRegistrations(status: "PENDING" | "APPROVED" | "REJECTED") {
+  const drivers = await db.driver.findMany({
+    where: { status },
+    orderBy: { createdAt: status === "PENDING" ? "asc" : "desc" },
+    take: 200,
+    include: {
+      user: { select: { name: true, email: true, banned: true } },
+      _count: { select: { listings: true } },
+    },
+  });
+  // Listings someone else added for the same phone number get linked to the account on approval.
+  const matches = await db.driver.findMany({
+    where: { status: "UNCLAIMED", phone: { in: drivers.map((d) => d.phone) } },
+    select: { phone: true, _count: { select: { listings: true } } },
+  });
+  return drivers.map((driver) => ({
+    ...driver,
+    mergeableListings: matches
+      .filter((m) => m.phone === driver.phone)
+      .reduce((sum, m) => sum + m._count.listings, 0),
+  }));
+}
+
+/**
+ * Approves a driver account. Unclaimed driver records with the same phone (added by other people)
+ * are merged into it, so the driver can manage those listings too.
+ */
+export async function approveDriver(driverId: string) {
+  const driver = await db.driver.findUniqueOrThrow({
+    where: { id: driverId },
+    select: { phone: true },
+  });
+  const duplicates = await db.driver.findMany({
+    where: { status: "UNCLAIMED", phone: driver.phone },
+    select: { id: true },
+  });
+  const ids = duplicates.map((d) => d.id);
+  await db.$transaction([
+    db.listing.updateMany({ where: { driverId: { in: ids } }, data: { driverId } }),
+    db.driver.deleteMany({ where: { id: { in: ids } } }),
+    db.driver.update({
+      where: { id: driverId },
+      data: { status: "APPROVED", approvedAt: new Date() },
+    }),
+  ]);
+}
+
+export function rejectDriver(driverId: string) {
+  return db.driver.update({ where: { id: driverId }, data: { status: "REJECTED" } });
+}
+
+// --- Users and bans ---------------------------------------------------------------------------
+
+export function listUsers(query: string) {
+  const q = query.trim();
+  return db.user.findMany({
+    where: q
+      ? {
+          OR: [
+            { name: { contains: q, mode: "insensitive" } },
+            { email: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : undefined,
+    orderBy: { createdAt: "desc" },
+    take: 100,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      createdAt: true,
+      banned: true,
+      banReason: true,
+      driver: { select: { status: true } },
+      _count: { select: { submittedListings: true, rideReports: true, problemReports: true } },
+    },
+  });
+}
+
+/**
+ * Bans a user: signs them out everywhere, rejects their pending submissions and, if they are a
+ * registered driver, unpublishes their routes.
+ */
+export async function banUser(userId: string, reason: string | null) {
+  const driver = await db.driver.findUnique({ where: { userId }, select: { id: true } });
+  await db.$transaction([
+    db.user.update({
+      where: { id: userId },
+      data: { banned: true, banReason: reason, bannedAt: new Date() },
+    }),
+    db.session.deleteMany({ where: { userId } }),
+    db.listing.updateMany({
+      where: { submittedById: userId, status: "PENDING" },
+      data: { status: "REJECTED" },
+    }),
+    ...(driver
+      ? [
+          db.driver.update({ where: { id: driver.id }, data: { status: "REJECTED" } }),
+          db.listing.updateMany({
+            where: { driverId: driver.id, status: "APPROVED" },
+            data: { status: "ARCHIVED" },
+          }),
+        ]
+      : []),
+  ]);
+}
+
+export function unbanUser(userId: string) {
+  return db.user.update({
+    where: { id: userId },
+    data: { banned: false, banReason: null, bannedAt: null },
+  });
 }

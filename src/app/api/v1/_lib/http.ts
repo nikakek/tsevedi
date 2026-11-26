@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { ZodError } from "zod";
 import { fieldErrors } from "@/lib/validation";
 import { clientIp, rateLimit } from "@/server/rate-limit";
+import { getCurrentUser } from "@/server/session";
 
 /** Every response is either { data } or { error: { code, message, fields? } }. */
 export function ok<T>(data: T, init?: ResponseInit) {
@@ -31,8 +32,18 @@ export async function readJson(request: Request): Promise<unknown | undefined> {
   }
 }
 
-export function limited(request: Request, action: string, limit: number) {
-  return !rateLimit(`api:${action}:${clientIp(request.headers)}`, limit, 60 * 60 * 1000);
+export function limited(request: Request, action: string, limit: number, key = "") {
+  return !rateLimit(`api:${action}:${key}:${clientIp(request.headers)}`, limit, 60 * 60 * 1000);
 }
 
 export const tooMany = () => fail(429, "rate_limited", "Too many requests, try again later");
+
+export const unauthorized = () =>
+  fail(
+    401,
+    "unauthorized",
+    "Sign in required. Send the session cookie or an Authorization: Bearer token.",
+  );
+
+/** The signed-in (non-banned) user from the cookie or bearer token, or null. */
+export const requestUser = (request: Request) => getCurrentUser(request.headers);

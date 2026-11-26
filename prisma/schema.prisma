@@ -38,6 +38,14 @@ enum Language {
   AZ
 }
 
+/// UNCLAIMED: added by someone else, no account. PENDING/APPROVED/REJECTED: registered by the driver.
+enum DriverStatus {
+  UNCLAIMED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum ListingStatus {
   PENDING
   APPROVED
@@ -92,9 +100,17 @@ model Driver {
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
+  /// Set when the driver registered with their own account.
+  userId     String?      @unique
+  user       User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  status     DriverStatus @default(UNCLAIMED)
+  approvedAt DateTime?
+
   listings Listing[]
+  savedBy  SavedDriver[]
 
   @@index([phone])
+  @@index([status])
 }
 
 model Listing {
@@ -123,20 +139,24 @@ model Listing {
   callAhead         Boolean  @default(true)
   notes             String?
 
-  status           ListingStatus @default(PENDING)
-  submittedByDriver Boolean      @default(false)
-  submitterContact String?
-  adminNote        String?
-  lastConfirmedAt  DateTime?
-  approvedAt       DateTime?
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  status            ListingStatus @default(PENDING)
+  submittedByDriver Boolean       @default(false)
+  submittedById     String?
+  submittedBy       User?         @relation("SubmittedListings", fields: [submittedById], references: [id], onDelete: SetNull)
+  submitterContact  String?
+  adminNote         String?
+  lastConfirmedAt   DateTime?
+  approvedAt        DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 
   rideReports    RideReport[]
   problemReports ProblemReport[]
+  savedBy        SavedListing[]
 
   @@index([status])
   @@index([driverId])
+  @@index([submittedById])
 }
 
 model RouteStop {
@@ -162,6 +182,8 @@ model RideReport {
   pricePaid  Int?
   comment    String?
   hidden     Boolean     @default(false)
+  userId     String?
+  user       User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   createdAt  DateTime    @default(now())
 
   @@index([listingId, hidden])
@@ -174,7 +196,106 @@ model ProblemReport {
   kind      ProblemKind
   message   String?
   resolved  Boolean     @default(false)
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   createdAt DateTime    @default(now())
 
   @@index([resolved])
+}
+
+// ---------------------------------------------------------------------------
+// Accounts (Better Auth). Field names follow Better Auth's core schema.
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String   @id
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  /// Banned users can't sign in or contribute.
+  banned    Boolean   @default(false)
+  banReason String?
+  bannedAt  DateTime?
+
+  sessions          Session[]
+  accounts          Account[]
+  driver            Driver?
+  savedDrivers      SavedDriver[]
+  savedListings     SavedListing[]
+  submittedListings Listing[]       @relation("SubmittedListings")
+  rideReports       RideReport[]
+  problemReports    ProblemReport[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model SavedDriver {
+  userId    String
+  driverId  String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  driver    Driver   @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@id([userId, driverId])
+}
+
+model SavedListing {
+  userId    String
+  listingId String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@id([userId, listingId])
 }

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { SignedIn } from "@/components/account-menu";
 import { ListingCard, tripFor } from "@/components/listing-card";
 import { ProblemReportForm, RideReportForm } from "@/components/report-forms";
 import { PageSkeleton } from "@/components/skeletons";
@@ -141,24 +142,35 @@ async function ListingContent({ params }: Pick<Props, "params">) {
               ))}
             </ul>
           )}
-          <div className="space-y-4">
-            <TodayInGeorgia>
-              {(today) => (
-                <RideReportForm
-                  action={rideReportAction.bind(null, listing.id)}
+          <SignedIn
+            fallback={
+              <Link
+                href={paths.signIn(locale, paths.listing(locale, listing.id))}
+                className="btn btn-secondary"
+              >
+                {dict.reportsSignIn}
+              </Link>
+            }
+          >
+            <div className="space-y-4">
+              <TodayInGeorgia>
+                {(today) => (
+                  <RideReportForm
+                    action={rideReportAction.bind(null, listing.id)}
+                    dict={dict.reports}
+                    validation={dict.validation}
+                    today={today}
+                  />
+                )}
+              </TodayInGeorgia>
+              <div>
+                <ProblemReportForm
+                  action={problemReportAction.bind(null, listing.id)}
                   dict={dict.reports}
-                  validation={dict.validation}
-                  today={today}
                 />
-              )}
-            </TodayInGeorgia>
-            <div>
-              <ProblemReportForm
-                action={problemReportAction.bind(null, listing.id)}
-                dict={dict.reports}
-              />
+              </div>
             </div>
-          </div>
+          </SignedIn>
         </section>
       </div>
     </>

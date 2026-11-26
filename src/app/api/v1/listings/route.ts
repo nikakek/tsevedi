@@ -1,4 +1,13 @@
-import { invalid, limited, ok, readJson, tooMany, fail } from "../_lib/http";
+import {
+  invalid,
+  limited,
+  ok,
+  readJson,
+  tooMany,
+  fail,
+  requestUser,
+  unauthorized,
+} from "../_lib/http";
 import { listingSubmissionSchema } from "@/lib/validation";
 import { createListingSubmission, UnknownPlaceError } from "@/server/mutations";
 
@@ -7,11 +16,13 @@ import { createListingSubmission, UnknownPlaceError } from "@/server/mutations";
  * `stops` is an ordered array of place slugs. The listing stays PENDING until approved.
  */
 export async function POST(request: Request) {
+  const user = await requestUser(request);
+  if (!user) return unauthorized();
   const parsed = listingSubmissionSchema.safeParse(await readJson(request));
   if (!parsed.success) return invalid(parsed.error);
-  if (limited(request, "submit", 10)) return tooMany();
+  if (limited(request, "submit", 10, user.id)) return tooMany();
   try {
-    const listing = await createListingSubmission(parsed.data);
+    const listing = await createListingSubmission(parsed.data, user.id);
     return ok({ id: listing.id, status: "PENDING" }, { status: 201 });
   } catch (error) {
     if (error instanceof UnknownPlaceError) {

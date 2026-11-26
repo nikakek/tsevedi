@@ -7,6 +7,8 @@ import {
   Pencil,
   Phone,
   RotateCcw,
+  ShieldBan,
+  ShieldCheck,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -18,13 +20,19 @@ import {
   knownPhones,
   listListings,
   listOpenProblems,
+  listDriverRegistrations,
   listRecentRideReports,
+  listUsers,
   type AdminListing,
 } from "@/server/admin";
 import { requireAdmin } from "@/server/admin-auth";
 import {
   approveAction,
+  approveDriverAction,
   archiveAction,
+  banUserAction,
+  rejectDriverAction,
+  unbanUserAction,
   confirmAction,
   logoutAction,
   rejectAction,
@@ -36,6 +44,8 @@ import {
 const TABS = [
   { key: "pending", label: "Pending" },
   { key: "approved", label: "Approved" },
+  { key: "drivers", label: "Driver accounts" },
+  { key: "users", label: "Users" },
   { key: "problems", label: "Problem reports" },
   { key: "rides", label: "Ride reports" },
   { key: "archived", label: "Archived / rejected" },
@@ -44,7 +54,7 @@ type Tab = (typeof TABS)[number]["key"];
 
 export default function AdminPage({ searchParams }: PageProps<"/admin">) {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-6">
+    <div className="mx-auto max-w-6xl px-4 py-6">
       <Suspense fallback={<p className="text-muted">Loading…</p>}>
         <Dashboard searchParams={searchParams} />
       </Suspense>
@@ -61,6 +71,7 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/admin">, "searchPara
     pending: counts.pending,
     approved: counts.approved,
     problems: counts.problems,
+    drivers: counts.drivers,
   };
 
   return (
@@ -101,6 +112,8 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/admin">, "searchPara
       )}
       {tab === "problems" && <ProblemsTab />}
       {tab === "rides" && <RidesTab />}
+      {tab === "drivers" && <DriversTab />}
+      {tab === "users" && <UsersTab query={typeof query.q === "string" ? query.q : ""} />}
     </>
   );
 }
@@ -129,6 +142,14 @@ async function ListingTab({ status }: { status: AdminListing["status"] }) {
                     <Check className="size-4" aria-hidden /> Approve (checked by phone)
                   </button>
                 </form>
+                {listing.submittedBy && !listing.submittedBy.banned && (
+                  <form action={banUserAction.bind(null, listing.submittedBy.id)}>
+                    <input type="hidden" name="reason" value="Spam or false information" />
+                    <button className="btn btn-secondary text-brand-700">
+                      <ShieldBan className="size-4" aria-hidden /> Ban submitter
+                    </button>
+                  </form>
+                )}
                 <form action={rejectAction.bind(null, listing.id)}>
                   <button className="btn btn-secondary">
                     <X className="size-4" aria-hidden /> Reject
@@ -217,6 +238,13 @@ function ListingSummary({ listing, knownDriver }: { listing: AdminListing; known
       <p className="text-muted text-xs sm:col-span-2">
         Submitted {listing.createdAt.toISOString().slice(0, 10)} by{" "}
         {listing.submittedByDriver ? "the driver" : "someone else"}
+        {listing.submittedBy && (
+          <>
+            {" "}
+            (<strong>{listing.submittedBy.name}</strong>, {listing.submittedBy.email}
+            {listing.submittedBy.banned && <span className="text-brand-700"> · banned</span>})
+          </>
+        )}
         {listing.submitterContact && <> · contact: {listing.submitterContact}</>}
         {listing.status === "APPROVED" && (
           <>
@@ -303,5 +331,157 @@ async function RidesTab() {
         </li>
       ))}
     </ul>
+  );
+}
+
+async function DriversTab() {
+  const [pending, approved] = await Promise.all([
+    listDriverRegistrations("PENDING"),
+    listDriverRegistrations("APPROVED"),
+  ]);
+  return (
+    <div className="space-y-8">
+      <section>
+        <h2 className="mb-3 text-lg font-semibold">Waiting for approval</h2>
+        {pending.length === 0 ? (
+          <p className="text-muted py-4">No driver registrations waiting.</p>
+        ) : (
+          <ul className="space-y-3">
+            {pending.map((driver) => (
+              <li key={driver.id} className="card p-4">
+                <div className="grid gap-1 text-sm sm:grid-cols-2">
+                  <p className="text-lg font-semibold sm:col-span-2">{driver.name}</p>
+                  <p>
+                    <a
+                      href={`tel:${driver.phone}`}
+                      className="text-brand-700 inline-flex items-center gap-1"
+                    >
+                      <Phone className="size-3.5" aria-hidden /> {formatPhone(driver.phone)}
+                    </a>
+                  </p>
+                  <p className="text-muted">
+                    Account: {driver.user?.name} · {driver.user?.email}
+                  </p>
+                  <p className="text-muted">
+                    {driver.vehicleType} {driver.vehicleColor} {driver.vehicleModel} {driver.plate}
+                    {driver.seats ? ` · ${driver.seats} seats` : ""}
+                  </p>
+                  <p className="text-muted">{driver.languages.join(", ") || "no languages"}</p>
+                  {driver.mergeableListings > 0 && (
+                    <p className="bg-ok-bg text-ok-fg rounded-lg px-2 py-1 sm:col-span-2">
+                      {driver.mergeableListings} existing listing(s) with this phone will be linked
+                      to this account.
+                    </p>
+                  )}
+                </div>
+                <div className="border-line mt-3 flex flex-wrap gap-2 border-t pt-3">
+                  <form action={approveDriverAction.bind(null, driver.id)}>
+                    <button className="btn btn-primary">
+                      <Check className="size-4" aria-hidden /> Approve (checked by phone)
+                    </button>
+                  </form>
+                  <form action={rejectDriverAction.bind(null, driver.id)}>
+                    <button className="btn btn-secondary">
+                      <X className="size-4" aria-hidden /> Reject
+                    </button>
+                  </form>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+      <section>
+        <h2 className="mb-3 text-lg font-semibold">Approved drivers</h2>
+        {approved.length === 0 ? (
+          <p className="text-muted py-4">No approved drivers yet.</p>
+        ) : (
+          <ul className="card divide-line divide-y">
+            {approved.map((driver) => (
+              <li
+                key={driver.id}
+                className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 text-sm"
+              >
+                <strong>{driver.name}</strong>
+                <span className="text-muted">{formatPhone(driver.phone)}</span>
+                <span className="text-muted">{driver.user?.email}</span>
+                <span className="text-muted ml-auto">{driver._count.listings} routes</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </div>
+  );
+}
+
+async function UsersTab({ query }: { query: string }) {
+  const users = await listUsers(query);
+  return (
+    <>
+      <form className="mb-4 flex gap-2" action="/admin">
+        <input type="hidden" name="tab" value="users" />
+        <input
+          name="q"
+          defaultValue={query}
+          placeholder="Search name or email"
+          className="field max-w-sm"
+        />
+        <button className="btn btn-secondary">Search</button>
+      </form>
+      {users.length === 0 ? (
+        <p className="text-muted py-4">No users found.</p>
+      ) : (
+        <ul className="space-y-2">
+          {users.map((user) => (
+            <li
+              key={user.id}
+              className={`card flex flex-wrap items-center gap-3 p-4 text-sm ${user.banned ? "opacity-70" : ""}`}
+            >
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold">
+                  {user.name}
+                  {user.driver && (
+                    <span className="text-muted font-normal">
+                      {" "}
+                      · driver ({user.driver.status.toLowerCase()})
+                    </span>
+                  )}
+                  {user.banned && (
+                    <span className="text-brand-700">
+                      {" "}
+                      · banned{user.banReason ? `: ${user.banReason}` : ""}
+                    </span>
+                  )}
+                </p>
+                <p className="text-muted">
+                  {user.email} · joined {user.createdAt.toISOString().slice(0, 10)} ·{" "}
+                  {user._count.submittedListings} routes added ·{" "}
+                  {user._count.rideReports + user._count.problemReports} reports
+                </p>
+              </div>
+              {user.banned ? (
+                <form action={unbanUserAction.bind(null, user.id)}>
+                  <button className="btn btn-secondary">
+                    <ShieldCheck className="size-4" aria-hidden /> Unban
+                  </button>
+                </form>
+              ) : (
+                <form action={banUserAction.bind(null, user.id)} className="flex flex-wrap gap-2">
+                  <input
+                    name="reason"
+                    placeholder="Reason (optional)"
+                    className="field max-w-48 py-1.5"
+                  />
+                  <button className="btn btn-secondary text-brand-700">
+                    <ShieldBan className="size-4" aria-hidden /> Ban
+                  </button>
+                </form>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
   );
 }

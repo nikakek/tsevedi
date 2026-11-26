@@ -1,5 +1,11 @@
 import "server-only";
-import type { ListingSubmission, ProblemReportInput, RideReportInput } from "@/lib/validation";
+import type {
+  DriverRegistration,
+  DriverRoute,
+  ListingSubmission,
+  ProblemReportInput,
+  RideReportInput,
+} from "@/lib/validation";
 import { db } from "./db";
 
 export class UnknownPlaceError extends Error {
@@ -8,56 +14,70 @@ export class UnknownPlaceError extends Error {
   }
 }
 
-/** Stores a submission as PENDING. Nothing becomes public until an admin approves it. */
-export async function createListingSubmission(input: ListingSubmission) {
+/** Maps place slugs to ids, throwing if any slug is unknown. */
+export async function resolveStops(slugs: string[]) {
   const places = await db.place.findMany({
-    where: { slug: { in: input.stops } },
+    where: { slug: { in: slugs } },
     select: { id: true, slug: true },
   });
   const idBySlug = new Map(places.map((place) => [place.slug, place.id]));
-  const unknown = input.stops.filter((slug) => !idBySlug.has(slug));
+  const unknown = slugs.filter((slug) => !idBySlug.has(slug));
   if (unknown.length) throw new UnknownPlaceError(unknown);
+  return slugs.map((slug, position) => ({ placeId: idBySlug.get(slug)!, position }));
+}
 
+/** Listing columns shared by every way a route is created or edited. */
+export function routeColumns(input: DriverRoute) {
+  return {
+    departureTime: input.departureTime.padStart(5, "0"),
+    days: input.days,
+    activeMonths: input.activeMonths,
+    departurePoint: input.departurePoint,
+    departureMapsUrl: input.departureMapsUrl ?? null,
+    returnTime: input.returnTime?.padStart(5, "0") ?? null,
+    returnPoint: input.returnPoint ?? null,
+    pricePerSeat: input.pricePerSeat ?? null,
+    priceWholeVehicle: input.priceWholeVehicle ?? null,
+    largeLuggage: input.largeLuggage ?? null,
+    callAhead: input.callAhead,
+    notes: input.notes ?? null,
+  };
+}
+
+/** Driver columns shared by public submissions, driver registration and admin edits. */
+export function driverColumns(input: DriverRegistration) {
+  return {
+    name: input.driverName,
+    phone: input.phone,
+    whatsapp: input.whatsapp,
+    viber: input.viber,
+    telegram: input.telegram,
+    languages: input.languages,
+    vehicleType: input.vehicleType,
+    vehicleModel: input.vehicleModel ?? null,
+    vehicleColor: input.vehicleColor ?? null,
+    plate: input.plate?.toUpperCase() ?? null,
+    seats: input.seats ?? null,
+  };
+}
+
+/** Stores a submission as PENDING. Nothing becomes public until an admin approves it. */
+export async function createListingSubmission(input: ListingSubmission, submittedById: string) {
+  const stops = await resolveStops(input.stops);
   return db.listing.create({
     data: {
-      driver: {
-        create: {
-          name: input.driverName,
-          phone: input.phone,
-          whatsapp: input.whatsapp,
-          viber: input.viber,
-          telegram: input.telegram,
-          languages: input.languages,
-          vehicleType: input.vehicleType,
-          vehicleModel: input.vehicleModel,
-          vehicleColor: input.vehicleColor,
-          plate: input.plate?.toUpperCase(),
-          seats: input.seats,
-        },
-      },
-      stops: {
-        create: input.stops.map((slug, position) => ({ placeId: idBySlug.get(slug)!, position })),
-      },
-      departureTime: input.departureTime.padStart(5, "0"),
-      days: input.days,
-      activeMonths: input.activeMonths,
-      departurePoint: input.departurePoint,
-      departureMapsUrl: input.departureMapsUrl,
-      returnTime: input.returnTime?.padStart(5, "0"),
-      returnPoint: input.returnPoint,
-      pricePerSeat: input.pricePerSeat,
-      priceWholeVehicle: input.priceWholeVehicle,
-      largeLuggage: input.largeLuggage,
-      callAhead: input.callAhead,
-      notes: input.notes,
+      driver: { create: driverColumns(input) },
+      stops: { create: stops },
+      ...routeColumns(input),
       submittedByDriver: input.submittedByDriver,
       submitterContact: input.submitterContact,
+      submittedBy: { connect: { id: submittedById } },
     },
     select: { id: true },
   });
 }
 
-async function assertApproved(listingId: string) {
+async function isApproved(listingId: string) {
   const listing = await db.listing.findFirst({
     where: { id: listingId, status: "APPROVED" },
     select: { id: true },
@@ -65,11 +85,12 @@ async function assertApproved(listingId: string) {
   return !!listing;
 }
 
-export async function createRideReport(listingId: string, input: RideReportInput) {
-  if (!(await assertApproved(listingId))) return null;
+export async function createRideReport(listingId: string, input: RideReportInput, userId: string) {
+  if (!(await isApproved(listingId))) return null;
   return db.rideReport.create({
     data: {
       listingId,
+      userId,
       travelDate: new Date(`${input.travelDate}T00:00:00Z`),
       outcome: input.outcome,
       departedAt: input.departedAt,
@@ -80,10 +101,14 @@ export async function createRideReport(listingId: string, input: RideReportInput
   });
 }
 
-export async function createProblemReport(listingId: string, input: ProblemReportInput) {
-  if (!(await assertApproved(listingId))) return null;
+export async function createProblemReport(
+  listingId: string,
+  input: ProblemReportInput,
+  userId: string,
+) {
+  if (!(await isApproved(listingId))) return null;
   return db.problemReport.create({
-    data: { listingId, kind: input.kind, message: input.message },
+    data: { listingId, userId, kind: input.kind, message: input.message },
     select: { id: true },
   });
 }

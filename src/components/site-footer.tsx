@@ -10,6 +10,7 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary 
     { href: paths.about(locale), label: dict.nav.about },
     { href: paths.add(locale), label: dict.nav.add },
     { href: paths.map(locale), label: dict.nav.map },
+    { href: paths.privacy(locale), label: dict.nav.privacy },
     { href: GITHUB_URL, label: dict.footer.openSource },
   ];
   return (

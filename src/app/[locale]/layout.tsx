@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/site-footer";
+import { SavedProvider } from "@/components/saved";
 import { SiteHeader } from "@/components/site-header";
 import { ThemeSync } from "@/components/theme";
 import Script from "next/script";
@@ -57,9 +58,11 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
           dangerouslySetInnerHTML={{ __html: themeScript }}
         />
         <ThemeSync locale={locale} />
-        <SiteHeader locale={locale} dict={dict} />
-        <main className="flex-1">{children}</main>
-        <SiteFooter locale={locale} dict={dict} />
+        <SavedProvider>
+          <SiteHeader locale={locale} dict={dict} />
+          <main className="flex-1">{children}</main>
+          <SiteFooter locale={locale} dict={dict} />
+        </SavedProvider>
       </body>
     </html>
   );

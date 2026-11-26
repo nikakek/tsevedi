@@ -5,6 +5,10 @@ import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { fieldErrors, listingSubmissionSchema, type ValidationKey } from "@/lib/validation";
 import {
+  approveDriver,
+  banUser,
+  rejectDriver,
+  unbanUser,
   confirmListing,
   resolveProblem,
   setListingStatus,
@@ -146,4 +150,30 @@ export async function updateListingAction(
   }
   refresh(id);
   return { ok: true, errors: {} };
+}
+
+export async function approveDriverAction(driverId: string) {
+  await requireAdmin();
+  await approveDriver(driverId);
+  updateTag(TAGS.listings);
+}
+
+export async function rejectDriverAction(driverId: string) {
+  await requireAdmin();
+  await rejectDriver(driverId);
+}
+
+export async function banUserAction(userId: string, formData: FormData) {
+  await requireAdmin();
+  const reason =
+    String(formData.get("reason") ?? "")
+      .trim()
+      .slice(0, 300) || null;
+  await banUser(userId, reason);
+  updateTag(TAGS.listings);
+}
+
+export async function unbanUserAction(userId: string) {
+  await requireAdmin();
+  await unbanUser(userId);
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Info, Map, Plus, Search } from "lucide-react";
+import { Info, Map, Plus, Search, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense } from "react";
@@ -8,6 +8,7 @@ import type { Locale } from "@/i18n/config";
 import { paths } from "@/lib/paths";
 
 type Labels = {
+  account: string;
   search: string;
   map: string;
   add: string;
@@ -60,7 +61,18 @@ function HeaderLinks({ locale, labels, pathname }: Props & { pathname: string | 
 
 function TabLinks({ locale, labels, pathname }: Props & { pathname: string | null }) {
   const short = { ...labels, ...labels.short };
-  return items(locale, short).map(({ href, label, icon: Icon, match }) => (
+  // On phones the last tab is the profile; "About" stays reachable from the footer.
+  const tabs = [
+    ...items(locale, short).slice(0, 3),
+    {
+      href: paths.account(locale),
+      label: labels.account,
+      icon: User,
+      match: (p: string) =>
+        p.endsWith("/account") || p.includes("/driver") || p.endsWith("/signin"),
+    },
+  ];
+  return tabs.map(({ href, label, icon: Icon, match }) => (
     <Link
       key={href}
       href={href}

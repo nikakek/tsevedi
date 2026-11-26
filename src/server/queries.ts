@@ -43,6 +43,7 @@ export type ListingView = {
   freshness: Freshness;
   rideReportCount: number;
   driver: {
+    id: string;
     name: string;
     phone: string;
     whatsapp: boolean;
@@ -112,6 +113,7 @@ function toView(row: ListingRow, now: Date): ListingView {
     freshness: freshness(verifiedAt, now),
     rideReportCount: row._count.rideReports,
     driver: {
+      id: driver.id,
       name: driver.name,
       phone: driver.phone,
       whatsapp: driver.whatsapp,

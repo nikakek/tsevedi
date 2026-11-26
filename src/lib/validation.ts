@@ -55,62 +55,79 @@ const optionalInt = (min: number, max: number) =>
       .optional(),
   );
 
-export const listingSubmissionSchema = z
-  .object({
-    submittedByDriver: z.boolean().default(false),
-    driverName: text(80),
-    phone: z.string({ error: "required" }).transform((value, ctx) => {
-      const phone = normalizePhone(value);
-      if (!phone) {
-        ctx.addIssue({ code: "custom", message: "phone" });
-        return z.NEVER;
-      }
-      return phone;
-    }),
-    whatsapp: z.boolean().default(false),
-    viber: z.boolean().default(false),
-    telegram: z.boolean().default(false),
-    languages: z.array(z.enum(LANGUAGES)).default([]),
-    vehicleType: z.enum(VEHICLE_TYPES, { error: "required" }),
-    vehicleModel: optionalText(60),
-    vehicleColor: optionalText(30),
-    plate: optionalText(15),
-    seats: optionalInt(1, 70),
-    stops: z
-      .array(z.string().trim().min(1), { error: "stops" })
-      .min(2, { error: "stops" })
-      .max(12, { error: "tooLong" })
-      .refine((stops) => new Set(stops).size === stops.length, { error: "duplicateStops" }),
-    departureTime: time,
-    days: z
-      .array(z.coerce.number().int().min(1).max(7), { error: "days" })
-      .min(1, { error: "days" }),
-    activeMonths: z.array(z.coerce.number().int().min(1).max(12)).default([]),
-    departurePoint: text(200),
-    departureMapsUrl: z.preprocess(
-      blankToUndefined,
-      z
-        .url({ error: "url", protocol: /^https?$/ })
-        .max(500, { error: "tooLong" })
-        .optional(),
-    ),
-    returnTime: optionalTime,
-    returnPoint: optionalText(200),
-    pricePerSeat: optionalInt(0, 5000),
-    priceWholeVehicle: optionalInt(0, 20000),
-    largeLuggage: z.boolean().optional(),
-    callAhead: z.boolean().default(true),
-    notes: optionalText(1000),
-    submitterContact: optionalText(200),
-  })
-  .transform((data) => ({
+/** Who drives: used by the public form and by driver registration. */
+export const driverFields = z.object({
+  driverName: text(80),
+  phone: z.string({ error: "required" }).transform((value, ctx) => {
+    const phone = normalizePhone(value);
+    if (!phone) {
+      ctx.addIssue({ code: "custom", message: "phone" });
+      return z.NEVER;
+    }
+    return phone;
+  }),
+  whatsapp: z.boolean().default(false),
+  viber: z.boolean().default(false),
+  telegram: z.boolean().default(false),
+  languages: z.array(z.enum(LANGUAGES)).default([]),
+  vehicleType: z.enum(VEHICLE_TYPES, { error: "required" }),
+  vehicleModel: optionalText(60),
+  vehicleColor: optionalText(30),
+  plate: optionalText(15),
+  seats: optionalInt(1, 70),
+});
+
+/** Where and when: used by the public form and by drivers managing their own routes. */
+export const routeFields = z.object({
+  stops: z
+    .array(z.string().trim().min(1), { error: "stops" })
+    .min(2, { error: "stops" })
+    .max(12, { error: "tooLong" })
+    .refine((stops) => new Set(stops).size === stops.length, { error: "duplicateStops" }),
+  departureTime: time,
+  days: z.array(z.coerce.number().int().min(1).max(7), { error: "days" }).min(1, { error: "days" }),
+  activeMonths: z.array(z.coerce.number().int().min(1).max(12)).default([]),
+  departurePoint: text(200),
+  departureMapsUrl: z.preprocess(
+    blankToUndefined,
+    z
+      .url({ error: "url", protocol: /^https?$/ })
+      .max(500, { error: "tooLong" })
+      .optional(),
+  ),
+  returnTime: optionalTime,
+  returnPoint: optionalText(200),
+  pricePerSeat: optionalInt(0, 5000),
+  priceWholeVehicle: optionalInt(0, 20000),
+  largeLuggage: z.boolean().optional(),
+  callAhead: z.boolean().default(true),
+  notes: optionalText(1000),
+});
+
+function normalizeRoute<T extends z.output<typeof routeFields>>(data: T): T {
+  return {
     ...data,
     // A return point without a return time means nothing.
     returnPoint: data.returnTime ? data.returnPoint : undefined,
     days: [...new Set(data.days)].sort((a, b) => a - b),
     activeMonths:
       data.activeMonths.length === 12 ? [] : [...new Set(data.activeMonths)].sort((a, b) => a - b),
-  }));
+  };
+}
+
+export const listingSubmissionSchema = driverFields
+  .extend(routeFields.shape)
+  .extend({
+    submittedByDriver: z.boolean().default(false),
+    submitterContact: optionalText(200),
+  })
+  .transform(normalizeRoute);
+
+export const driverRegistrationSchema = driverFields;
+export type DriverRegistration = z.output<typeof driverRegistrationSchema>;
+
+export const driverRouteSchema = routeFields.transform(normalizeRoute);
+export type DriverRoute = z.output<typeof driverRouteSchema>;
 
 export type ListingSubmission = z.output<typeof listingSubmissionSchema>;
 

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { PageSkeleton } from "@/components/skeletons";
+import { SignInRequired } from "@/components/sign-in-required";
 import { SubmitForm } from "@/components/submit-form";
 import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
@@ -10,6 +11,7 @@ import { toComboPlaces } from "@/lib/combo-places";
 import { paths } from "@/lib/paths";
 import { PAGE } from "@/lib/ui";
 import { getPlaces } from "@/server/queries";
+import { getCurrentUser } from "@/server/session";
 import { submitListingAction } from "../actions";
 
 type Props = PageProps<"/[locale]/add">;
@@ -59,11 +61,13 @@ async function AddForm({
   locale: "ka" | "en" | "ru";
   searchParams: Props["searchParams"];
 }) {
-  const [dict, places, query] = await Promise.all([
+  const [dict, places, query, user] = await Promise.all([
     getDictionary(locale),
     getPlaces(),
     searchParams,
+    getCurrentUser(),
   ]);
+  if (!user) return <SignInRequired locale={locale} dict={dict} next={paths.add(locale)} />;
   const known = (slug: unknown) =>
     typeof slug === "string" && places.some((p) => p.slug === slug) ? slug : null;
   return (
