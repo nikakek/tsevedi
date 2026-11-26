@@ -1,26 +1,98 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-sans: var(--font-inter), var(--font-georgian), ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand: Georgian flag red */
+  --color-brand-50: #fef2f2;
+  --color-brand-100: #fde3e3;
+  --color-brand-200: #fbcaca;
+  --color-brand-500: #e5383b;
+  --color-brand-600: #d0202a;
+  --color-brand-700: #ae1820;
+  --color-brand-800: #8f171d;
+  --color-brand-900: #77181d;
+
+  --color-surface: #ffffff;
+  --color-canvas: #f7f5f2;
+  --color-ink: #1c1917;
+  --color-muted: #6b6560;
+  --color-line: #e7e3de;
+
+  --color-whatsapp: #1f9d55;
+  --color-viber: #7360f2;
+  --color-telegram: #229ed9;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility card {
+  border-radius: 1rem;
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+}
+
+@utility field {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+  padding: 0.625rem 0.875rem;
+  font-size: 1rem;
+  &:focus {
+    outline: none;
+    border-color: var(--color-brand-600);
+    box-shadow: 0 0 0 3px var(--color-brand-100);
+  }
+  &[aria-invalid="true"] {
+    border-color: var(--color-brand-600);
+  }
+}
+
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  padding: 0.625rem 1rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  transition: background-color 120ms, color 120ms, border-color 120ms;
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@utility btn-primary {
+  background: var(--color-brand-600);
+  color: white;
+  &:hover:not(:disabled) {
+    background: var(--color-brand-700);
+  }
+}
+
+@utility btn-secondary {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  border: 1px solid var(--color-line);
+  &:hover:not(:disabled) {
+    border-color: var(--color-muted);
+  }
 }
