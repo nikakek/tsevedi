@@ -1,0 +1,5 @@
+# Netlify detects Next.js automatically; this only sets the build command.
+# Each deploy applies pending migrations and upserts the places list before building,
+# because the build prerenders pages from the database.
+[build]
+  command = "npm run build:deploy"

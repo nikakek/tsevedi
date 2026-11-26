@@ -137,10 +137,14 @@ Open http://localhost:3000. The moderation dashboard is at http://localhost:3000
 
 ## Deployment
 
-Any Node.js host with PostgreSQL works. For example, [Vercel](https://vercel.com) with
-[Neon](https://neon.tech): set `DATABASE_URL`, `ADMIN_PASSWORD`, `SESSION_SECRET` and `NEXT_PUBLIC_SITE_URL`, then
-run `npm run db:deploy && npm run db:seed` once against the production database. The build prerenders pages, so the
-database must be reachable at build time.
+Any Node.js host with PostgreSQL works, for example [Netlify](https://netlify.com) or [Vercel](https://vercel.com)
+with a free [Neon](https://neon.tech) database.
+
+1. Create a PostgreSQL database and copy its connection string (on Neon, use the pooled one).
+2. In the host's environment variables, set `DATABASE_URL`, `ADMIN_PASSWORD`, `SESSION_SECRET`
+   (`openssl rand -base64 32`) and `NEXT_PUBLIC_SITE_URL` (your site's URL).
+3. Deploy. The build command `npm run build:deploy` (preconfigured for Netlify in `netlify.toml`) applies
+   migrations, seeds places and builds. The database must be reachable at build time because pages are prerendered.
 
 The rate limiter is in memory, which is fine for one instance. On multiple instances, replace it with Redis/Upstash
 ([`rate-limit.ts`](src/server/rate-limit.ts)).
