@@ -4,6 +4,7 @@ import { CheckCircle2, Flag, MessageSquarePlus } from "lucide-react";
 import { useState, useTransition } from "react";
 import type { ActionState } from "@/app/[locale]/actions";
 import type { Dictionary } from "@/i18n/dictionaries";
+import { useHydrated } from "@/lib/use-hydrated";
 import { PROBLEM_KINDS, RIDE_OUTCOMES } from "@/lib/validation";
 
 type Action = (formData: FormData) => Promise<ActionState>;
@@ -11,13 +12,14 @@ type Action = (formData: FormData) => Promise<ActionState>;
 function useAction(action: Action) {
   const [state, setState] = useState<ActionState>({ status: "idle" });
   const [pending, startTransition] = useTransition();
+  const hydrated = useHydrated();
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     startTransition(async () => setState(await action(formData)));
   }
   const error = (field: string) => (state.status === "error" ? state.errors[field] : undefined);
-  return { state, pending, onSubmit, error };
+  return { state, pending: pending || !hydrated, onSubmit, error };
 }
 
 /** Invisible to people; bots that fill every field get silently ignored. */

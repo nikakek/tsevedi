@@ -33,7 +33,6 @@ const value = (formData: FormData, name: string) => {
 export async function submitListingAction(formData: FormData): Promise<ActionState> {
   // Honeypot: real people never see or fill this field.
   if (value(formData, "website")) return { status: "success" };
-  if (!(await allowed("submit", 10))) return { status: "error", errors: {}, reason: "rate-limited" };
 
   const parsed = listingSubmissionSchema.safeParse({
     submittedByDriver: value(formData, "who") === "driver",
@@ -64,6 +63,8 @@ export async function submitListingAction(formData: FormData): Promise<ActionSta
     submitterContact: value(formData, "submitterContact"),
   });
   if (!parsed.success) return { status: "error", errors: fieldErrors(parsed.error), reason: "invalid" };
+  // Only valid submissions count towards the limit, so typos don't lock people out.
+  if (!(await allowed("submit", 10))) return { status: "error", errors: {}, reason: "rate-limited" };
 
   try {
     await createListingSubmission(parsed.data);

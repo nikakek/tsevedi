@@ -6,6 +6,7 @@ import { useState } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { paths } from "@/lib/paths";
+import { useHydrated } from "@/lib/use-hydrated";
 import { PlaceCombobox, type ComboPlace } from "./place-combobox";
 
 type Props = {
@@ -24,6 +25,7 @@ export function SearchForm({ locale, dict, places, initialFrom = null, initialTo
   const [to, setTo] = useState<string | null>(initialTo);
   const [date, setDate] = useState(initialDate ?? "");
   const [error, setError] = useState(false);
+  const hydrated = useHydrated();
 
   function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -84,7 +86,7 @@ export function SearchForm({ locale, dict, places, initialFrom = null, initialTo
           />
           <span id="search-date-hint" className="sr-only">{dict.anyDay}</span>
         </div>
-        <button type="submit" className="btn btn-primary h-[2.875rem]">
+        <button type="submit" className="btn btn-primary h-[2.875rem]" disabled={!hydrated}>
           <Search className="size-4" aria-hidden />
           {dict.submit}
         </button>

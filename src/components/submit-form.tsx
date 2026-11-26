@@ -9,6 +9,7 @@ import type { Dictionary } from "@/i18n/dictionaries";
 import { paths } from "@/lib/paths";
 import { ALL_DAYS, weekdayName } from "@/lib/schedule";
 import { LANGUAGES, VEHICLE_TYPES } from "@/lib/validation";
+import { useHydrated } from "@/lib/use-hydrated";
 import { PlaceCombobox, type ComboPlace } from "./place-combobox";
 
 type Props = {
@@ -47,6 +48,7 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
   const [returns, setReturns] = useState(false);
   const [allYear, setAllYear] = useState(true);
   const [formKey, setFormKey] = useState(0);
+  const hydrated = useHydrated();
 
   const errors = state.status === "error" ? state.errors : {};
   const err = (field: string) => errors[field];
@@ -370,7 +372,7 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
           {state.reason === "rate-limited" ? s.errorTooMany : s.errorGeneric}
         </p>
       )}
-      <button type="submit" className="btn btn-primary w-full py-3 text-base sm:w-auto" disabled={pending}>
+      <button type="submit" className="btn btn-primary w-full py-3 text-base sm:w-auto" disabled={!hydrated || pending}>
         {pending ? dict.common.loading : s.submit}
       </button>
     </form>
