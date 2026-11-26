@@ -58,9 +58,9 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                   href={paths.route(locale, pair.from.slug, pair.to.slug)}
                   className="card hover:border-brand-200 hover:bg-brand-50 flex items-center gap-2 px-4 py-3 font-medium"
                 >
-                  <span className="truncate">{placeName(pair.from, locale)}</span>
+                  <span className="min-w-0">{placeName(pair.from, locale)}</span>
                   <ArrowRight className="text-muted size-4 shrink-0" aria-hidden />
-                  <span className="truncate">{placeName(pair.to, locale)}</span>
+                  <span className="min-w-0">{placeName(pair.to, locale)}</span>
                   {pair.minPrice !== null && (
                     <span className="text-muted ml-auto shrink-0 text-sm">{pair.minPrice}₾</span>
                   )}
