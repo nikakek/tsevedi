@@ -2,7 +2,9 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { ThemeScript, ThemeSync } from "@/components/theme";
+import { ThemeSync } from "@/components/theme";
+import Script from "next/script";
+import { themeScript } from "@/lib/theme-script";
 import { isLocale, LOCALE_TAGS, LOCALES } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { SITE_URL } from "@/lib/paths";
@@ -48,10 +50,12 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
       className={`${fontVariables} h-full antialiased`}
       suppressHydrationWarning
     >
-      <head>
-        <ThemeScript />
-      </head>
       <body className="flex min-h-full flex-col">
+        <Script
+          id="theme"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themeScript }}
+        />
         <ThemeSync locale={locale} />
         <SiteHeader locale={locale} dict={dict} />
         <main className="flex-1">{children}</main>

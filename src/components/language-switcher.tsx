@@ -1,7 +1,6 @@
 "use client";
 
 import { Check, ChevronDown, Globe } from "lucide-react";
-import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef } from "react";
 import { LOCALE_COOKIE, LOCALE_LABELS, LOCALES, type Locale } from "@/i18n/config";
@@ -19,8 +18,10 @@ function remember(locale: Locale) {
 function Options({ locale, close }: { locale: Locale; close: () => void }) {
   const pathname = usePathname();
   const search = useSearchParams().toString();
+  // A plain <a> on purpose: changing language swaps the root layout (<html lang>), which should be a
+  // full page load rather than a client transition that re-renders <html> and its head scripts.
   return LOCALES.map((l) => (
-    <Link
+    <a
       key={l}
       href={`${swapLocale(pathname, l)}${search ? `?${search}` : ""}`}
       onClick={() => {
@@ -34,7 +35,7 @@ function Options({ locale, close }: { locale: Locale; close: () => void }) {
     >
       {LOCALE_LABELS[l]}
       {l === locale && <Check className="text-brand-600 size-4" aria-hidden />}
-    </Link>
+    </a>
   ));
 }
 

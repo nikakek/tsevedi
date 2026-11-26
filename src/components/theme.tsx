@@ -4,19 +4,9 @@ import { Moon, Sun } from "lucide-react";
 import { useLayoutEffect, useSyncExternalStore } from "react";
 import { useHydrated } from "@/lib/use-hydrated";
 
-export type Theme = "light" | "dark";
-const STORAGE_KEY = "theme";
+import { THEME_STORAGE_KEY as STORAGE_KEY, type Theme } from "@/lib/theme";
+
 const CHANGE_EVENT = "tsevedi-theme";
-
-/**
- * Inline script for <head>: applies the saved theme before the first paint so there is no flash.
- * Visitors who never chose a theme start with their system's preference.
- */
-const script = `(function(){try{var c=localStorage.getItem("${STORAGE_KEY}");var d=c?c==="dark":matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.dataset.theme=d?"dark":"light"}catch(e){document.documentElement.dataset.theme="light"}})()`;
-
-export function ThemeScript() {
-  return <script dangerouslySetInnerHTML={{ __html: script }} />;
-}
 
 function currentTheme(): Theme {
   try {
