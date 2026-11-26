@@ -128,9 +128,11 @@ const en = {
   phrase: {
     driverTitle: "Show this to the driver",
     staffTitle: "Ask your host to call",
-    staffHint: "Show this to hostel or guesthouse staff. They can phone the driver and book for you.",
+    staffHint:
+      "Show this to hostel or guesthouse staff. They can phone the driver and book for you.",
     meaning: "Meaning",
-    driverMeaning: "Hello! I want to go to {to}. I need one seat. Is the price {price} GEL? What time do we leave?",
+    driverMeaning:
+      "Hello! I want to go to {to}. I need one seat. Is the price {price} GEL? What time do we leave?",
     driverMeaningNoPrice: "Hello! I want to go to {to}. I need one seat. What time do we leave?",
     staffMeaning:
       "Hello! I don't speak Georgian. Could you call this driver and book me a seat? I'm going from {from} to {to}. Thank you!",
@@ -240,14 +242,15 @@ const en = {
     body: [
       "Outside the big cities, getting around Georgia by public transport depends on knowing someone who knows the driver. Marshrutkas to villages in Racha, Tusheti, Svaneti or Guria often run once a day, with no timetable online, and the only way to book is to call the driver.",
       "Tsevedi puts that local knowledge in one place: departure times, prices, where to wait and the driver's phone number, in Georgian, English and Russian.",
-      "The name comes from წევედი (\"tsevedi\"), the way people in Georgian villages say \"let's go\".",
+      'The name comes from წევედი ("tsevedi"), the way people in Georgian villages say "let\'s go".',
       "Tsevedi is free for travellers and drivers and takes no commission. Every listing is checked by phone before it's published, and travellers' ride reports keep the information fresh.",
     ],
     disclaimerTitle: "Please note",
     disclaimer:
       "Drivers are independent. Tsevedi doesn't operate any transport, so always confirm the time and price with the driver before travelling.",
     contactTitle: "Contact",
-    contact: "Found a mistake or want to help? Use \"Report a problem\" on any listing or add a route.",
+    contact:
+      'Found a mistake or want to help? Use "Report a problem" on any listing or add a route.',
   },
   footer: {
     tagline: "Marshrutkas and shared rides across Georgia.",

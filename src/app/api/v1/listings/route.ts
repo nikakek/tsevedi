@@ -15,7 +15,9 @@ export async function POST(request: Request) {
     return ok({ id: listing.id, status: "PENDING" }, { status: 201 });
   } catch (error) {
     if (error instanceof UnknownPlaceError) {
-      return fail(422, "validation_failed", `Unknown places: ${error.slugs.join(", ")}`, { stops: "stops" });
+      return fail(422, "validation_failed", `Unknown places: ${error.slugs.join(", ")}`, {
+        stops: "stops",
+      });
     }
     throw error;
   }

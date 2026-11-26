@@ -7,8 +7,16 @@ import { UnknownPlaceError } from "./mutations";
 
 const adminInclude = {
   driver: true,
-  stops: { orderBy: { position: "asc" }, include: { place: { select: { slug: true, nameEn: true, nameKa: true } } } },
-  rideReports: { where: { hidden: false, outcome: "WORKED" }, orderBy: { travelDate: "desc" }, take: 1, select: { travelDate: true } },
+  stops: {
+    orderBy: { position: "asc" },
+    include: { place: { select: { slug: true, nameEn: true, nameKa: true } } },
+  },
+  rideReports: {
+    where: { hidden: false, outcome: "WORKED" },
+    orderBy: { travelDate: "desc" },
+    take: 1,
+    select: { travelDate: true },
+  },
   _count: { select: { problemReports: { where: { resolved: false } } } },
 } as const;
 
@@ -24,10 +32,15 @@ export async function listListings(status: ListingStatus) {
   const now = new Date();
   const withFreshness = rows.map((row) => {
     const verifiedAt = lastVerifiedAt(row.lastConfirmedAt, row.rideReports[0]?.travelDate ?? null);
-    return { ...row, verifiedDaysAgo: verifiedAt ? daysSince(verifiedAt, now) : null, freshness: freshness(verifiedAt, now) };
+    return {
+      ...row,
+      verifiedDaysAgo: verifiedAt ? daysSince(verifiedAt, now) : null,
+      freshness: freshness(verifiedAt, now),
+    };
   });
   // For approved listings, the ones most in need of a phone call come first.
-  if (status === "APPROVED") withFreshness.sort((a, b) => (b.verifiedDaysAgo ?? Infinity) - (a.verifiedDaysAgo ?? Infinity));
+  if (status === "APPROVED")
+    withFreshness.sort((a, b) => (b.verifiedDaysAgo ?? Infinity) - (a.verifiedDaysAgo ?? Infinity));
   return withFreshness;
 }
 
@@ -73,7 +86,10 @@ export function listRecentRideReports() {
     orderBy: { createdAt: "desc" },
     include: {
       listing: {
-        select: { id: true, stops: { orderBy: { position: "asc" }, select: { place: { select: { nameEn: true } } } } },
+        select: {
+          id: true,
+          stops: { orderBy: { position: "asc" }, select: { place: { select: { nameEn: true } } } },
+        },
       },
     },
     take: 100,
@@ -98,11 +114,19 @@ export async function setListingStatus(id: string, status: ListingStatus) {
 }
 
 export function confirmListing(id: string) {
-  return db.listing.update({ where: { id }, data: { lastConfirmedAt: new Date() }, select: { id: true } });
+  return db.listing.update({
+    where: { id },
+    data: { lastConfirmedAt: new Date() },
+    select: { id: true },
+  });
 }
 
 export function resolveProblem(id: string) {
-  return db.problemReport.update({ where: { id }, data: { resolved: true }, select: { listingId: true } });
+  return db.problemReport.update({
+    where: { id },
+    data: { resolved: true },
+    select: { listingId: true },
+  });
 }
 
 export function setRideReportHidden(id: string, hidden: boolean) {
@@ -110,7 +134,10 @@ export function setRideReportHidden(id: string, hidden: boolean) {
 }
 
 export async function updateListing(id: string, input: ListingSubmission & { adminNote?: string }) {
-  const places = await db.place.findMany({ where: { slug: { in: input.stops } }, select: { id: true, slug: true } });
+  const places = await db.place.findMany({
+    where: { slug: { in: input.stops } },
+    select: { id: true, slug: true },
+  });
   const idBySlug = new Map(places.map((place) => [place.slug, place.id]));
   const unknown = input.stops.filter((slug) => !idBySlug.has(slug));
   if (unknown.length) throw new UnknownPlaceError(unknown);
@@ -137,7 +164,9 @@ export async function updateListing(id: string, input: ListingSubmission & { adm
     db.listing.update({
       where: { id },
       data: {
-        stops: { create: input.stops.map((slug, position) => ({ placeId: idBySlug.get(slug)!, position })) },
+        stops: {
+          create: input.stops.map((slug, position) => ({ placeId: idBySlug.get(slug)!, position })),
+        },
         departureTime: input.departureTime.padStart(5, "0"),
         days: input.days,
         activeMonths: input.activeMonths,

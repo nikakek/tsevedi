@@ -25,7 +25,10 @@ async function pickPlace(page: Page, label: string, query: string, option: strin
   const input = page.getByRole("combobox", { name: label, exact: true });
   await input.click();
   await input.fill(query);
-  await page.getByRole("option", { name: new RegExp(option) }).first().click();
+  await page
+    .getByRole("option", { name: new RegExp(option) })
+    .first()
+    .click();
 }
 
 test("a visitor can submit a route", async ({ page }) => {
@@ -45,7 +48,10 @@ test("a visitor can submit a route", async ({ page }) => {
   await page.getByRole("button", { name: "Submit route" }).click();
 
   await expect(page.getByRole("heading", { name: "Thank you!" })).toBeVisible();
-  const listing = await db.listing.findFirst({ where: { driver: { name: driverName } }, include: { stops: true } });
+  const listing = await db.listing.findFirst({
+    where: { driver: { name: driverName } },
+    include: { stops: true },
+  });
   expect(listing?.status).toBe("PENDING");
   expect(listing?.stops).toHaveLength(3);
 });
@@ -90,8 +96,14 @@ test("a traveller finds it by searching in Russian and Georgian", async ({ page 
   await expect(card).toContainText("25₾");
   await expect(card).toContainText("Didube bus station, platform 4");
   await expect(card).toContainText("Confirmed today");
-  await expect(card.getByRole("link", { name: "Call" })).toHaveAttribute("href", `tel:+995${phoneDigits}`);
-  await expect(card.getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", new RegExp(`wa\\.me/995${phoneDigits}\\?text=`));
+  await expect(card.getByRole("link", { name: "Call" })).toHaveAttribute(
+    "href",
+    `tel:+995${phoneDigits}`,
+  );
+  await expect(card.getByRole("link", { name: "WhatsApp" })).toHaveAttribute(
+    "href",
+    new RegExp(`wa\\.me/995${phoneDigits}\\?text=`),
+  );
 
   await card.getByRole("button", { name: "Georgian card" }).click();
   const dialog = page.getByRole("dialog");
@@ -114,7 +126,11 @@ test("stops along the way and the place page link to the listing", async ({ page
 
 test("a traveller reports a ride and switches language", async ({ page }) => {
   await page.goto("/en/routes/tbilisi/oni");
-  await page.getByRole("article").filter({ hasText: driverName }).getByRole("link", { name: "Details" }).click();
+  await page
+    .getByRole("article")
+    .filter({ hasText: driverName })
+    .getByRole("link", { name: "Details" })
+    .click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Tbilisi → Oni");
 
   await page.getByRole("button", { name: "I took this ride" }).click();

@@ -16,7 +16,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const dict = await getDictionary(locale);
-  return { title: dict.submit.title, description: dict.submit.intro, alternates: { canonical: paths.add(locale) } };
+  return {
+    title: dict.submit.title,
+    description: dict.submit.intro,
+    alternates: { canonical: paths.add(locale) },
+  };
 }
 
 export default async function AddPage({ params, searchParams }: Props) {
@@ -26,7 +30,7 @@ export default async function AddPage({ params, searchParams }: Props) {
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
       <h1 className="text-3xl font-bold">{dict.submit.title}</h1>
-      <p className="mt-2 mb-6 text-muted">{dict.submit.intro}</p>
+      <p className="text-muted mt-2 mb-6">{dict.submit.intro}</p>
       <Suspense fallback={<PageSkeleton />}>
         <AddForm locale={locale} searchParams={searchParams} />
       </Suspense>
@@ -34,9 +38,20 @@ export default async function AddPage({ params, searchParams }: Props) {
   );
 }
 
-async function AddForm({ locale, searchParams }: { locale: "ka" | "en" | "ru"; searchParams: Props["searchParams"] }) {
-  const [dict, places, query] = await Promise.all([getDictionary(locale), getPlaces(), searchParams]);
-  const known = (slug: unknown) => (typeof slug === "string" && places.some((p) => p.slug === slug) ? slug : null);
+async function AddForm({
+  locale,
+  searchParams,
+}: {
+  locale: "ka" | "en" | "ru";
+  searchParams: Props["searchParams"];
+}) {
+  const [dict, places, query] = await Promise.all([
+    getDictionary(locale),
+    getPlaces(),
+    searchParams,
+  ]);
+  const known = (slug: unknown) =>
+    typeof slug === "string" && places.some((p) => p.slug === slug) ? slug : null;
   return (
     <SubmitForm
       locale={locale}

@@ -31,7 +31,7 @@ export default async function AboutPage({ params }: Props) {
         <p className="mt-1">{dict.about.disclaimer}</p>
       </div>
       <h2 className="mt-8 text-xl font-semibold">{dict.about.contactTitle}</h2>
-      <p className="mt-2 text-muted">{dict.about.contact}</p>
+      <p className="text-muted mt-2">{dict.about.contact}</p>
       <Link href={paths.add(locale)} className="btn btn-primary mt-4">
         {dict.nav.add}
       </Link>

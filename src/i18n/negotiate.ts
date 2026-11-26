@@ -14,10 +14,14 @@ export function negotiateLocale(acceptLanguage: string | null, saved?: string | 
       const [tag, ...params] = part.trim().split(";");
       const q = params.map((p) => p.trim()).find((p) => p.startsWith("q="));
       const quality = q ? Number(q.slice(2)) : 1;
-      return { lang: tag.toLowerCase().split("-")[0], quality: Number.isNaN(quality) ? 0 : quality, index };
+      return {
+        lang: tag.toLowerCase().split("-")[0],
+        quality: Number.isNaN(quality) ? 0 : quality,
+        index,
+      };
     })
     .filter((entry) => entry.quality > 0)
     .sort((a, b) => b.quality - a.quality || a.index - b.index);
 
-  return ranked.find((entry) => isLocale(entry.lang))?.lang as Locale ?? DEFAULT_LOCALE;
+  return (ranked.find((entry) => isLocale(entry.lang))?.lang as Locale) ?? DEFAULT_LOCALE;
 }

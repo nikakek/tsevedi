@@ -27,7 +27,11 @@ async function main() {
       lat: place.lat,
       lng: place.lng,
     };
-    await prisma.place.upsert({ where: { slug: place.slug }, create: { slug: place.slug, ...data }, update: data });
+    await prisma.place.upsert({
+      where: { slug: place.slug },
+      create: { slug: place.slug, ...data },
+      update: data,
+    });
   }
   console.log(`Seeded ${PLACES.length} places.`);
 }

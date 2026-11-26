@@ -10,7 +10,10 @@ import { EditForm } from "./edit-form";
 export default function EditListingPage({ params }: PageProps<"/admin/listings/[id]">) {
   return (
     <div className="mx-auto max-w-3xl px-4 py-6">
-      <Link href="/admin" className="mb-4 inline-flex items-center gap-1 text-sm text-muted hover:text-ink">
+      <Link
+        href="/admin"
+        className="text-muted hover:text-ink mb-4 inline-flex items-center gap-1 text-sm"
+      >
         <ArrowLeft className="size-4" aria-hidden /> Dashboard
       </Link>
       <Suspense fallback={<p className="text-muted">Loading…</p>}>
@@ -29,8 +32,10 @@ async function Editor({ params }: Pick<PageProps<"/admin/listings/[id]">, "param
 
   return (
     <>
-      <h1 className="mb-1 text-2xl font-bold">{listing.stops.map((s) => s.place.nameEn).join(" → ")}</h1>
-      <p className="mb-6 text-sm text-muted">Status: {listing.status}</p>
+      <h1 className="mb-1 text-2xl font-bold">
+        {listing.stops.map((s) => s.place.nameEn).join(" → ")}
+      </h1>
+      <p className="text-muted mb-6 text-sm">Status: {listing.status}</p>
       <EditForm
         action={updateListingAction.bind(null, listing.id)}
         values={{

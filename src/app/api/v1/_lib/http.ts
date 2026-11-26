@@ -8,7 +8,12 @@ export function ok<T>(data: T, init?: ResponseInit) {
   return NextResponse.json({ data }, init);
 }
 
-export function fail(status: number, code: string, message: string, fields?: Record<string, string>) {
+export function fail(
+  status: number,
+  code: string,
+  message: string,
+  fields?: Record<string, string>,
+) {
   return NextResponse.json({ error: { code, message, ...(fields ? { fields } : {}) } }, { status });
 }
 

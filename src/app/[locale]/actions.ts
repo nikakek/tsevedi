@@ -9,14 +9,23 @@ import {
   rideReportSchema,
   type ValidationKey,
 } from "@/lib/validation";
-import { createListingSubmission, createProblemReport, createRideReport, UnknownPlaceError } from "@/server/mutations";
+import {
+  createListingSubmission,
+  createProblemReport,
+  createRideReport,
+  UnknownPlaceError,
+} from "@/server/mutations";
 import { TAGS } from "@/server/queries";
 import { clientIp, rateLimit } from "@/server/rate-limit";
 
 export type ActionState =
   | { status: "idle" }
   | { status: "success" }
-  | { status: "error"; errors: Record<string, ValidationKey>; reason?: "invalid" | "rate-limited" | "not-found" };
+  | {
+      status: "error";
+      errors: Record<string, ValidationKey>;
+      reason?: "invalid" | "rate-limited" | "not-found";
+    };
 
 const HOUR = 60 * 60 * 1000;
 
@@ -62,25 +71,33 @@ export async function submitListingAction(formData: FormData): Promise<ActionSta
     notes: value(formData, "notes"),
     submitterContact: value(formData, "submitterContact"),
   });
-  if (!parsed.success) return { status: "error", errors: fieldErrors(parsed.error), reason: "invalid" };
+  if (!parsed.success)
+    return { status: "error", errors: fieldErrors(parsed.error), reason: "invalid" };
   // Only valid submissions count towards the limit, so typos don't lock people out.
-  if (!(await allowed("submit", 10))) return { status: "error", errors: {}, reason: "rate-limited" };
+  if (!(await allowed("submit", 10)))
+    return { status: "error", errors: {}, reason: "rate-limited" };
 
   try {
     await createListingSubmission(parsed.data);
   } catch (error) {
-    if (error instanceof UnknownPlaceError) return { status: "error", errors: { stops: "stops" }, reason: "invalid" };
+    if (error instanceof UnknownPlaceError)
+      return { status: "error", errors: { stops: "stops" }, reason: "invalid" };
     throw error;
   }
   return { status: "success" };
 }
 
-export async function rideReportAction(listingId: string, formData: FormData): Promise<ActionState> {
+export async function rideReportAction(
+  listingId: string,
+  formData: FormData,
+): Promise<ActionState> {
   if (value(formData, "website")) return { status: "success" };
-  if (!(await allowed("ride-report", 20))) return { status: "error", errors: {}, reason: "rate-limited" };
+  if (!(await allowed("ride-report", 20)))
+    return { status: "error", errors: {}, reason: "rate-limited" };
 
   const parsed = rideReportSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { status: "error", errors: fieldErrors(parsed.error), reason: "invalid" };
+  if (!parsed.success)
+    return { status: "error", errors: fieldErrors(parsed.error), reason: "invalid" };
 
   const report = await createRideReport(listingId, parsed.data);
   if (!report) return { status: "error", errors: {}, reason: "not-found" };
@@ -89,12 +106,17 @@ export async function rideReportAction(listingId: string, formData: FormData): P
   return { status: "success" };
 }
 
-export async function problemReportAction(listingId: string, formData: FormData): Promise<ActionState> {
+export async function problemReportAction(
+  listingId: string,
+  formData: FormData,
+): Promise<ActionState> {
   if (value(formData, "website")) return { status: "success" };
-  if (!(await allowed("problem-report", 20))) return { status: "error", errors: {}, reason: "rate-limited" };
+  if (!(await allowed("problem-report", 20)))
+    return { status: "error", errors: {}, reason: "rate-limited" };
 
   const parsed = problemReportSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { status: "error", errors: fieldErrors(parsed.error), reason: "invalid" };
+  if (!parsed.success)
+    return { status: "error", errors: fieldErrors(parsed.error), reason: "invalid" };
 
   const report = await createProblemReport(listingId, parsed.data);
   if (!report) return { status: "error", errors: {}, reason: "not-found" };

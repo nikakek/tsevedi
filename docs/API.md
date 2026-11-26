@@ -12,7 +12,13 @@ Every response is either:
 or
 
 ```json
-{ "error": { "code": "validation_failed", "message": "Some fields are invalid", "fields": { "phone": "phone" } } }
+{
+  "error": {
+    "code": "validation_failed",
+    "message": "Some fields are invalid",
+    "fields": { "phone": "phone" }
+  }
+}
 ```
 
 `fields` maps a field name to a validation key (`required`, `phone`, `time`, `url`, `stops`, `duplicateStops`,
@@ -33,8 +39,22 @@ or
 All places with names in Georgian, English and Russian, search aliases, region and approximate coordinates.
 
 ```json
-{ "data": [{ "id": "…", "slug": "oni", "nameKa": "ონი", "nameEn": "Oni", "nameRu": "Они",
-  "aliases": [], "region": "racha-lechkhumi", "kind": "TOWN", "lat": 42.5793, "lng": 43.4425 }] }
+{
+  "data": [
+    {
+      "id": "…",
+      "slug": "oni",
+      "nameKa": "ონი",
+      "nameEn": "Oni",
+      "nameRu": "Они",
+      "aliases": [],
+      "region": "racha-lechkhumi",
+      "kind": "TOWN",
+      "lat": 42.5793,
+      "lng": 43.4425
+    }
+  ]
+}
 ```
 
 Use slugs (`oni`, `stepantsminda`, …) everywhere else in the API. The search logic in `src/lib/place-search.ts` and
@@ -110,7 +130,13 @@ Optional: `viber`, `telegram`, `vehicleModel`, `vehicleColor`, `plate`, `seats`,
 ### `POST /listings/:id/ride-reports`
 
 ```json
-{ "travelDate": "2026-07-01", "outcome": "WORKED", "departedAt": "09:10", "pricePaid": 25, "comment": "…" }
+{
+  "travelDate": "2026-07-01",
+  "outcome": "WORKED",
+  "departedAt": "09:10",
+  "pricePaid": 25,
+  "comment": "…"
+}
 ```
 
 `outcome` is `WORKED`, `DIFFERENT` or `DID_NOT_RUN`. A `WORKED` report counts as a fresh confirmation of the listing.

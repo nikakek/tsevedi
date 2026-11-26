@@ -5,7 +5,9 @@ import { negotiateLocale } from "@/i18n/negotiate";
 /** Sends visitors without a language prefix to /ka, /en or /ru based on their browser or saved choice. */
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const hasLocale = LOCALES.some((locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`));
+  const hasLocale = LOCALES.some(
+    (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`),
+  );
   if (hasLocale) return;
 
   const locale = negotiateLocale(

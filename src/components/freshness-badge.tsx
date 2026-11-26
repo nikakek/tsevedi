@@ -14,7 +14,7 @@ export function FreshnessBadge({
 }) {
   if (freshness === "unknown" || daysAgo === null) {
     return (
-      <span className="inline-flex items-center gap-1 text-xs text-muted">
+      <span className="text-muted inline-flex items-center gap-1 text-xs">
         <CircleHelp className="size-3.5" aria-hidden /> {dict.unverified}
       </span>
     );

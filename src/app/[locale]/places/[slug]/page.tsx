@@ -39,7 +39,19 @@ export default function PlacePage({ params }: Props) {
   );
 }
 
-function RouteList({ locale, title, from, places, reverse }: { locale: Locale; title: string; from: PlaceSummary; places: PlaceSummary[]; reverse?: boolean }) {
+function RouteList({
+  locale,
+  title,
+  from,
+  places,
+  reverse,
+}: {
+  locale: Locale;
+  title: string;
+  from: PlaceSummary;
+  places: PlaceSummary[];
+  reverse?: boolean;
+}) {
   if (places.length === 0) return null;
   return (
     <section className="mt-6">
@@ -51,9 +63,12 @@ function RouteList({ locale, title, from, places, reverse }: { locale: Locale; t
             const [a, b] = reverse ? [other, from] : [from, other];
             return (
               <li key={other.id}>
-                <Link href={paths.route(locale, a.slug, b.slug)} className="card flex items-center gap-2 px-4 py-3 hover:border-brand-200 hover:bg-brand-50">
+                <Link
+                  href={paths.route(locale, a.slug, b.slug)}
+                  className="card hover:border-brand-200 hover:bg-brand-50 flex items-center gap-2 px-4 py-3"
+                >
                   <span>{placeName(a, locale)}</span>
-                  <ArrowRight className="size-4 text-muted" aria-hidden />
+                  <ArrowRight className="text-muted size-4" aria-hidden />
                   <span className="font-medium">{placeName(b, locale)}</span>
                 </Link>
               </li>
@@ -74,7 +89,7 @@ async function PlaceContent({ params }: Pick<Props, "params">) {
 
   return (
     <>
-      <p className="text-sm text-muted">
+      <p className="text-muted text-sm">
         {dict.place.region}: {regionName(place.region, locale)}
       </p>
       <h1 className="text-3xl font-bold">{t(dict.place.heading, vars)}</h1>
@@ -87,8 +102,19 @@ async function PlaceContent({ params }: Pick<Props, "params">) {
         </div>
       ) : (
         <>
-          <RouteList locale={locale} title={t(dict.place.from, vars)} from={place} places={destinations} />
-          <RouteList locale={locale} title={t(dict.place.to, vars)} from={place} places={origins} reverse />
+          <RouteList
+            locale={locale}
+            title={t(dict.place.from, vars)}
+            from={place}
+            places={destinations}
+          />
+          <RouteList
+            locale={locale}
+            title={t(dict.place.to, vars)}
+            from={place}
+            places={origins}
+            reverse
+          />
         </>
       )}
     </>

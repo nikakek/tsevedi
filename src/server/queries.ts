@@ -163,7 +163,10 @@ export async function searchRoutes(
   let reverseCount = 0;
 
   for (const listing of listings) {
-    const stopRefs = { stops: listing.stops.map((s) => ({ placeId: s.id })), returnTime: listing.returnTime };
+    const stopRefs = {
+      stops: listing.stops.map((s) => ({ placeId: s.id })),
+      returnTime: listing.returnTime,
+    };
     const match = matchListing(stopRefs, fromId, toId);
     if (match) {
       results.push({ listing, match, runsOnDate: date ? runsOn(listing, date) : null });
@@ -174,7 +177,9 @@ export async function searchRoutes(
 
   const departure = (r: RouteResult) =>
     minutesOfDay(r.match.direction === "outbound" ? r.listing.departureTime : r.listing.returnTime);
-  results.sort((a, b) => Number(b.runsOnDate ?? 0) - Number(a.runsOnDate ?? 0) || departure(a) - departure(b));
+  results.sort(
+    (a, b) => Number(b.runsOnDate ?? 0) - Number(a.runsOnDate ?? 0) || departure(a) - departure(b),
+  );
   return { results, reverseCount };
 }
 
@@ -194,7 +199,10 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
   "use cache";
   cacheLife("hours");
   cacheTag(TAGS.listings, TAGS.listing(id));
-  const row = await db.listing.findFirst({ where: { id, status: "APPROVED" }, include: listingInclude });
+  const row = await db.listing.findFirst({
+    where: { id, status: "APPROVED" },
+    include: listingInclude,
+  });
   if (!row) return null;
   const reports = await db.rideReport.findMany({
     where: { listingId: id, hidden: false },
@@ -214,7 +222,12 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
   };
 }
 
-export type RoutePair = { from: PlaceSummary; to: PlaceSummary; count: number; minPrice: number | null };
+export type RoutePair = {
+  from: PlaceSummary;
+  to: PlaceSummary;
+  count: number;
+  minPrice: number | null;
+};
 
 /** Distinct origin → destination pairs, most listings first. Used on the homepage and in the sitemap. */
 export async function getRoutePairs(): Promise<RoutePair[]> {
@@ -224,7 +237,8 @@ export async function getRoutePairs(): Promise<RoutePair[]> {
     const key = `${from.slug}>${to.slug}`;
     const pair = pairs.get(key) ?? { from, to, count: 0, minPrice: null };
     pair.count++;
-    if (price !== null) pair.minPrice = pair.minPrice === null ? price : Math.min(pair.minPrice, price);
+    if (price !== null)
+      pair.minPrice = pair.minPrice === null ? price : Math.min(pair.minPrice, price);
     pairs.set(key, pair);
   };
   for (const listing of listings) {
@@ -234,7 +248,9 @@ export async function getRoutePairs(): Promise<RoutePair[]> {
     add(first, last, listing.pricePerSeat);
     if (listing.returnTime) add(last, first, listing.pricePerSeat);
   }
-  return [...pairs.values()].sort((a, b) => b.count - a.count || a.from.nameEn.localeCompare(b.from.nameEn));
+  return [...pairs.values()].sort(
+    (a, b) => b.count - a.count || a.from.nameEn.localeCompare(b.from.nameEn),
+  );
 }
 
 /** Listings that stop at a place, split by whether the place is where you board or get off. */

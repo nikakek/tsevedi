@@ -19,7 +19,15 @@ type Props = {
   compact?: boolean;
 };
 
-export function SearchForm({ locale, dict, places, initialFrom = null, initialTo = null, initialDate = null, compact }: Props) {
+export function SearchForm({
+  locale,
+  dict,
+  places,
+  initialFrom = null,
+  initialTo = null,
+  initialDate = null,
+  compact,
+}: Props) {
   const router = useRouter();
   const [from, setFrom] = useState<string | null>(initialFrom);
   const [to, setTo] = useState<string | null>(initialTo);
@@ -38,7 +46,11 @@ export function SearchForm({ locale, dict, places, initialFrom = null, initialTo
   }
 
   return (
-    <form onSubmit={submit} className={compact ? "card p-3" : "card p-4 shadow-sm sm:p-5"} noValidate>
+    <form
+      onSubmit={submit}
+      className={compact ? "card p-3" : "card p-4 shadow-sm sm:p-5"}
+      noValidate
+    >
       <div className="grid gap-3 sm:grid-cols-[1fr_auto_1fr_10rem_auto] sm:items-end">
         <PlaceCombobox
           label={dict.from}
@@ -84,7 +96,9 @@ export function SearchForm({ locale, dict, places, initialFrom = null, initialTo
             onChange={(event) => setDate(event.target.value)}
             aria-describedby="search-date-hint"
           />
-          <span id="search-date-hint" className="sr-only">{dict.anyDay}</span>
+          <span id="search-date-hint" className="sr-only">
+            {dict.anyDay}
+          </span>
         </div>
         <button type="submit" className="btn btn-primary h-[2.875rem]" disabled={!hydrated}>
           <Search className="size-4" aria-hidden />
@@ -92,7 +106,7 @@ export function SearchForm({ locale, dict, places, initialFrom = null, initialTo
         </button>
       </div>
       {error && (
-        <p role="alert" className="mt-2 text-sm text-brand-700">
+        <p role="alert" className="text-brand-700 mt-2 text-sm">
           {dict.pickBoth}
         </p>
       )}

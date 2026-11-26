@@ -19,7 +19,11 @@ type Props = PageProps<"/[locale]/routes/[from]/[to]">;
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, from, to } = await params;
   if (!isLocale(locale)) return {};
-  const [dict, fromPlace, toPlace] = await Promise.all([getDictionary(locale), getPlaceBySlug(from), getPlaceBySlug(to)]);
+  const [dict, fromPlace, toPlace] = await Promise.all([
+    getDictionary(locale),
+    getPlaceBySlug(from),
+    getPlaceBySlug(to),
+  ]);
   if (!fromPlace || !toPlace) return {};
   const vars = { ...placeVars(fromPlace, locale, "from"), ...placeVars(toPlace, locale, "to") };
   return {
@@ -72,16 +76,24 @@ async function RouteResults({ params, searchParams }: Pick<Props, "params" | "se
 
       <header className="mt-6 mb-4">
         <h1 className="text-2xl font-bold">
-          {t(dict.route.heading, { from: placeName(fromPlace, locale), to: placeName(toPlace, locale) })}
+          {t(dict.route.heading, {
+            from: placeName(fromPlace, locale),
+            to: placeName(toPlace, locale),
+          })}
         </h1>
         {results.length > 0 && (
           <p className="text-muted">
             {date && <>{t(dict.route.showingDate, { date: formatDate(date, locale) })} · </>}
-            {running.length === 1 ? dict.route.resultsOne : t(dict.route.results, { count: running.length })}
+            {running.length === 1
+              ? dict.route.resultsOne
+              : t(dict.route.results, { count: running.length })}
             {date && (
               <>
                 {" · "}
-                <Link href={paths.route(locale, from, to)} className="text-brand-700 hover:underline">
+                <Link
+                  href={paths.route(locale, from, to)}
+                  className="text-brand-700 hover:underline"
+                >
                   {dict.route.showAllDays}
                 </Link>
               </>
@@ -95,15 +107,28 @@ async function RouteResults({ params, searchParams }: Pick<Props, "params" | "se
       ) : (
         <div className="space-y-4">
           {running.map((r) => (
-            <ListingCard key={`${r.listing.id}-${r.match.direction}`} listing={r.listing} match={r.match} locale={locale} dict={dict} />
+            <ListingCard
+              key={`${r.listing.id}-${r.match.direction}`}
+              listing={r.listing}
+              match={r.match}
+              locale={locale}
+              dict={dict}
+            />
           ))}
           {notRunning.length > 0 && date && (
             <>
-              <h2 className="pt-4 text-sm font-semibold text-muted uppercase">
+              <h2 className="text-muted pt-4 text-sm font-semibold uppercase">
                 {t(dict.route.notOnDate, { date: formatDate(date, locale) })}
               </h2>
               {notRunning.map((r) => (
-                <ListingCard key={`${r.listing.id}-${r.match.direction}`} listing={r.listing} match={r.match} locale={locale} dict={dict} dimmed />
+                <ListingCard
+                  key={`${r.listing.id}-${r.match.direction}`}
+                  listing={r.listing}
+                  match={r.match}
+                  locale={locale}
+                  dict={dict}
+                  dimmed
+                />
               ))}
             </>
           )}
@@ -126,18 +151,33 @@ async function RouteResults({ params, searchParams }: Pick<Props, "params" | "se
   );
 }
 
-function EmptyState({ locale, dict, from, to, reverseCount }: { locale: Locale; dict: Awaited<ReturnType<typeof getDictionary>>; from: string; to: string; reverseCount: number }) {
+function EmptyState({
+  locale,
+  dict,
+  from,
+  to,
+  reverseCount,
+}: {
+  locale: Locale;
+  dict: Awaited<ReturnType<typeof getDictionary>>;
+  from: string;
+  to: string;
+  reverseCount: number;
+}) {
   return (
     <div className="card p-6 text-center">
       <h2 className="text-lg font-semibold">{dict.route.noResultsTitle}</h2>
-      <p className="mx-auto mt-2 max-w-md text-muted">{dict.route.noResultsText}</p>
+      <p className="text-muted mx-auto mt-2 max-w-md">{dict.route.noResultsText}</p>
       <Link href={paths.add(locale, from, to)} className="btn btn-primary mt-4">
         {dict.route.addCta}
       </Link>
       {reverseCount > 0 && (
-        <p className="mt-4 text-sm text-muted">
+        <p className="text-muted mt-4 text-sm">
           {dict.route.noResultsReverse}{" "}
-          <Link href={paths.route(locale, to, from)} className="font-medium text-brand-700 hover:underline">
+          <Link
+            href={paths.route(locale, to, from)}
+            className="text-brand-700 font-medium hover:underline"
+          >
             {reverseCount} →
           </Link>
         </p>

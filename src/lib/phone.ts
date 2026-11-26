@@ -9,7 +9,8 @@ export function normalizePhone(input: string): string | null {
 
   if (trimmed.startsWith("+") || trimmed.startsWith("00")) {
     const international = trimmed.startsWith("00") ? digits.slice(2) : digits;
-    if (international.startsWith("995")) return international.length === 12 ? `+${international}` : null;
+    if (international.startsWith("995"))
+      return international.length === 12 ? `+${international}` : null;
     return international.length >= 8 && international.length <= 15 ? `+${international}` : null;
   }
   if (digits.length === 12 && digits.startsWith("995")) return `+${digits}`;

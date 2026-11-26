@@ -5,7 +5,10 @@ import { createRideReport } from "@/server/mutations";
 import { TAGS } from "@/server/queries";
 
 /** POST /api/v1/listings/:id/ride-reports: { travelDate, outcome, departedAt?, pricePaid?, comment? } */
-export async function POST(request: Request, { params }: RouteContext<"/api/v1/listings/[id]/ride-reports">) {
+export async function POST(
+  request: Request,
+  { params }: RouteContext<"/api/v1/listings/[id]/ride-reports">,
+) {
   const { id } = await params;
   const parsed = rideReportSchema.safeParse(await readJson(request));
   if (!parsed.success) return invalid(parsed.error);

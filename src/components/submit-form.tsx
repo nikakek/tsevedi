@@ -23,7 +23,15 @@ type Props = {
 
 const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 
-function Section({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
+function Section({
+  title,
+  hint,
+  children,
+}: {
+  title: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
   return (
     <fieldset className="card space-y-4 p-4 sm:p-5">
       <legend className="sr-only">{title}</legend>
@@ -31,14 +39,21 @@ function Section({ title, hint, children }: { title: string; hint?: string; chil
         <h2 className="text-lg font-semibold" aria-hidden>
           {title}
         </h2>
-        {hint && <p className="text-sm text-muted">{hint}</p>}
+        {hint && <p className="text-muted text-sm">{hint}</p>}
       </div>
       {children}
     </fieldset>
   );
 }
 
-export function SubmitForm({ locale, dict, places, action, initialFrom = null, initialTo = null }: Props) {
+export function SubmitForm({
+  locale,
+  dict,
+  places,
+  action,
+  initialFrom = null,
+  initialTo = null,
+}: Props) {
   const s = dict.submit;
   const [state, setState] = useState<ActionState>({ status: "idle" });
   const [pending, startTransition] = useTransition();
@@ -54,7 +69,7 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
   const err = (field: string) => errors[field];
   const message = (field: string) =>
     err(field) ? (
-      <p className="mt-1 text-sm text-brand-700" id={`${field}-error`}>
+      <p className="text-brand-700 mt-1 text-sm" id={`${field}-error`}>
         {dict.validation[err(field)]}
       </p>
     ) : null;
@@ -82,7 +97,7 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
       <div className="card p-8 text-center" role="status">
         <CheckCircle2 className="mx-auto size-12 text-emerald-600" aria-hidden />
         <h2 className="mt-3 text-xl font-bold">{s.successTitle}</h2>
-        <p className="mx-auto mt-2 max-w-md text-muted">{s.successText}</p>
+        <p className="text-muted mx-auto mt-2 max-w-md">{s.successText}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             type="button"
@@ -119,10 +134,18 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
       <Section title={s.whoTitle}>
         <div className="flex flex-wrap gap-4">
           <label className="flex items-center gap-2">
-            <input type="radio" name="who" value="driver" defaultChecked className="accent-brand-600" /> {s.whoDriver}
+            <input
+              type="radio"
+              name="who"
+              value="driver"
+              defaultChecked
+              className="accent-brand-600"
+            />{" "}
+            {s.whoDriver}
           </label>
           <label className="flex items-center gap-2">
-            <input type="radio" name="who" value="other" className="accent-brand-600" /> {s.whoOther}
+            <input type="radio" name="who" value="other" className="accent-brand-600" />{" "}
+            {s.whoOther}
           </label>
         </div>
       </Section>
@@ -148,7 +171,9 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
                 places={places}
                 locale={locale}
                 value={stop.slug}
-                onChange={(slug) => setVia((list) => list.map((v) => (v.key === stop.key ? { ...v, slug } : v)))}
+                onChange={(slug) =>
+                  setVia((list) => list.map((v) => (v.key === stop.key ? { ...v, slug } : v)))
+                }
               />
             </div>
             <button
@@ -164,7 +189,7 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
         ))}
         <button
           type="button"
-          className="ml-4 inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:underline"
+          className="text-brand-700 ml-4 inline-flex items-center gap-1 text-sm font-medium hover:underline"
           onClick={() => setVia((list) => [...list, { key: Date.now(), slug: null }])}
         >
           <Plus className="size-4" aria-hidden /> {s.addStop}
@@ -186,7 +211,13 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block text-sm font-medium">
             {s.departureTime}
-            <input type="time" name="departureTime" required className="field mt-1" {...invalid("departureTime")} />
+            <input
+              type="time"
+              name="departureTime"
+              required
+              className="field mt-1"
+              {...invalid("departureTime")}
+            />
             {message("departureTime")}
           </label>
         </div>
@@ -205,7 +236,14 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
         </label>
         <label className="block text-sm font-medium">
           {s.mapsUrl}
-          <input type="url" name="departureMapsUrl" inputMode="url" placeholder="https://maps.app.goo.gl/…" className="field mt-1" {...invalid("departureMapsUrl")} />
+          <input
+            type="url"
+            name="departureMapsUrl"
+            inputMode="url"
+            placeholder="https://maps.app.goo.gl/…"
+            className="field mt-1"
+            {...invalid("departureMapsUrl")}
+          />
           {message("departureMapsUrl")}
         </label>
         <fieldset>
@@ -213,8 +251,14 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
           <div className="flex flex-wrap gap-2">
             {ALL_DAYS.map((day) => (
               <label key={day} className="cursor-pointer">
-                <input type="checkbox" name="days" value={day} defaultChecked className="peer sr-only" />
-                <span className="block rounded-lg border border-line px-3 py-1.5 text-sm peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-800 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-600">
+                <input
+                  type="checkbox"
+                  name="days"
+                  value={day}
+                  defaultChecked
+                  className="peer sr-only"
+                />
+                <span className="border-line peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-800 peer-focus-visible:ring-brand-600 block rounded-lg border px-3 py-1.5 text-sm peer-focus-visible:ring-2">
                   {weekdayName(day, locale, "short")}
                 </span>
               </label>
@@ -225,16 +269,28 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
         <fieldset>
           <legend className="mb-2 text-sm font-medium">{s.months}</legend>
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={allYear} onChange={(e) => setAllYear(e.target.checked)} className="accent-brand-600" />
+            <input
+              type="checkbox"
+              checked={allYear}
+              onChange={(e) => setAllYear(e.target.checked)}
+              className="accent-brand-600"
+            />
             {s.allYear}
           </label>
           {!allYear && (
             <div className="mt-2 grid grid-cols-4 gap-2 sm:grid-cols-6">
               {MONTHS.map((month) => (
                 <label key={month} className="cursor-pointer">
-                  <input type="checkbox" name="activeMonths" value={month} className="peer sr-only" />
-                  <span className="block rounded-lg border border-line px-2 py-1.5 text-center text-sm peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-800 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-600">
-                    {new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(new Date(Date.UTC(2024, month - 1, 1)))}
+                  <input
+                    type="checkbox"
+                    name="activeMonths"
+                    value={month}
+                    className="peer sr-only"
+                  />
+                  <span className="border-line peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-800 peer-focus-visible:ring-brand-600 block rounded-lg border px-2 py-1.5 text-center text-sm peer-focus-visible:ring-2">
+                    {new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(
+                      new Date(Date.UTC(2024, month - 1, 1)),
+                    )}
                   </span>
                 </label>
               ))}
@@ -242,14 +298,25 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
           )}
         </fieldset>
         <label className="flex items-center gap-2 text-sm font-medium">
-          <input type="checkbox" name="returns" checked={returns} onChange={(e) => setReturns(e.target.checked)} className="accent-brand-600" />
+          <input
+            type="checkbox"
+            name="returns"
+            checked={returns}
+            onChange={(e) => setReturns(e.target.checked)}
+            className="accent-brand-600"
+          />
           {s.returns}
         </label>
         {returns && (
-          <div className="grid gap-4 border-l-2 border-brand-200 pl-4 sm:grid-cols-2">
+          <div className="border-brand-200 grid gap-4 border-l-2 pl-4 sm:grid-cols-2">
             <label className="block text-sm font-medium">
               {s.returnTime}
-              <input type="time" name="returnTime" className="field mt-1" {...invalid("returnTime")} />
+              <input
+                type="time"
+                name="returnTime"
+                className="field mt-1"
+                {...invalid("returnTime")}
+              />
               {message("returnTime")}
             </label>
             <label className="block text-sm font-medium">
@@ -264,12 +331,26 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block text-sm font-medium">
             {s.pricePerSeat}
-            <input type="number" name="pricePerSeat" min={0} inputMode="numeric" className="field mt-1" {...invalid("pricePerSeat")} />
+            <input
+              type="number"
+              name="pricePerSeat"
+              min={0}
+              inputMode="numeric"
+              className="field mt-1"
+              {...invalid("pricePerSeat")}
+            />
             {message("pricePerSeat")}
           </label>
           <label className="block text-sm font-medium">
             {s.priceWholeVehicle}
-            <input type="number" name="priceWholeVehicle" min={0} inputMode="numeric" className="field mt-1" {...invalid("priceWholeVehicle")} />
+            <input
+              type="number"
+              name="priceWholeVehicle"
+              min={0}
+              inputMode="numeric"
+              className="field mt-1"
+              {...invalid("priceWholeVehicle")}
+            />
             {message("priceWholeVehicle")}
           </label>
         </div>
@@ -279,13 +360,30 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block text-sm font-medium">
             {s.driverName}
-            <input type="text" name="driverName" required maxLength={80} autoComplete="name" className="field mt-1" {...invalid("driverName")} />
+            <input
+              type="text"
+              name="driverName"
+              required
+              maxLength={80}
+              autoComplete="name"
+              className="field mt-1"
+              {...invalid("driverName")}
+            />
             {message("driverName")}
           </label>
           <label className="block text-sm font-medium">
             {s.phone}
-            <input type="tel" name="phone" required inputMode="tel" autoComplete="tel" placeholder="555 12 34 56" className="field mt-1" {...invalid("phone")} />
-            {message("phone") ?? <p className="mt-1 text-xs text-muted">{s.phoneHint}</p>}
+            <input
+              type="tel"
+              name="phone"
+              required
+              inputMode="tel"
+              autoComplete="tel"
+              placeholder="555 12 34 56"
+              className="field mt-1"
+              {...invalid("phone")}
+            />
+            {message("phone") ?? <p className="text-muted mt-1 text-xs">{s.phoneHint}</p>}
           </label>
         </div>
         <fieldset>
@@ -293,7 +391,8 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
           <div className="flex flex-wrap gap-4">
             {(["whatsapp", "viber", "telegram"] as const).map((app) => (
               <label key={app} className="flex items-center gap-2 text-sm">
-                <input type="checkbox" name={app} className="accent-brand-600" /> {dict.listing[app]}
+                <input type="checkbox" name={app} className="accent-brand-600" />{" "}
+                {dict.listing[app]}
               </label>
             ))}
           </div>
@@ -303,7 +402,13 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
           <div className="flex flex-wrap gap-4">
             {LANGUAGES.map((lang) => (
               <label key={lang} className="flex items-center gap-2 text-sm">
-                <input type="checkbox" name="languages" value={lang} defaultChecked={lang === "KA"} className="accent-brand-600" />
+                <input
+                  type="checkbox"
+                  name="languages"
+                  value={lang}
+                  defaultChecked={lang === "KA"}
+                  className="accent-brand-600"
+                />
                 {dict.language[lang]}
               </label>
             ))}
@@ -317,8 +422,14 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
           <div className="flex flex-wrap gap-2">
             {VEHICLE_TYPES.map((type) => (
               <label key={type} className="cursor-pointer">
-                <input type="radio" name="vehicleType" value={type} defaultChecked={type === "MARSHRUTKA"} className="peer sr-only" />
-                <span className="block rounded-lg border border-line px-3 py-1.5 text-sm peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-800 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-600">
+                <input
+                  type="radio"
+                  name="vehicleType"
+                  value={type}
+                  defaultChecked={type === "MARSHRUTKA"}
+                  className="peer sr-only"
+                />
+                <span className="border-line peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-800 peer-focus-visible:ring-brand-600 block rounded-lg border px-3 py-1.5 text-sm peer-focus-visible:ring-2">
                   {dict.vehicle[type]}
                 </span>
               </label>
@@ -329,19 +440,45 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block text-sm font-medium">
             {s.vehicleModel}
-            <input type="text" name="vehicleModel" maxLength={60} placeholder={s.vehicleModelPlaceholder} className="field mt-1" />
+            <input
+              type="text"
+              name="vehicleModel"
+              maxLength={60}
+              placeholder={s.vehicleModelPlaceholder}
+              className="field mt-1"
+            />
           </label>
           <label className="block text-sm font-medium">
             {s.vehicleColor}
-            <input type="text" name="vehicleColor" maxLength={30} placeholder={s.vehicleColorPlaceholder} className="field mt-1" />
+            <input
+              type="text"
+              name="vehicleColor"
+              maxLength={30}
+              placeholder={s.vehicleColorPlaceholder}
+              className="field mt-1"
+            />
           </label>
           <label className="block text-sm font-medium">
             {s.plate}
-            <input type="text" name="plate" maxLength={15} placeholder="AA-123-BB" className="field mt-1 uppercase" />
+            <input
+              type="text"
+              name="plate"
+              maxLength={15}
+              placeholder="AA-123-BB"
+              className="field mt-1 uppercase"
+            />
           </label>
           <label className="block text-sm font-medium">
             {s.seats}
-            <input type="number" name="seats" min={1} max={70} inputMode="numeric" className="field mt-1" {...invalid("seats")} />
+            <input
+              type="number"
+              name="seats"
+              min={1}
+              max={70}
+              inputMode="numeric"
+              className="field mt-1"
+              {...invalid("seats")}
+            />
             {message("seats")}
           </label>
         </div>
@@ -349,10 +486,12 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
 
       <Section title={s.extraTitle}>
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="callAhead" defaultChecked className="accent-brand-600" /> {s.callAhead}
+          <input type="checkbox" name="callAhead" defaultChecked className="accent-brand-600" />{" "}
+          {s.callAhead}
         </label>
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="largeLuggage" className="accent-brand-600" /> {s.largeLuggage}
+          <input type="checkbox" name="largeLuggage" className="accent-brand-600" />{" "}
+          {s.largeLuggage}
         </label>
         <label className="block text-sm font-medium">
           {s.notes}
@@ -368,11 +507,15 @@ export function SubmitForm({ locale, dict, places, action, initialFrom = null, i
       </Section>
 
       {state.status === "error" && (
-        <p role="alert" className="rounded-xl bg-brand-50 p-4 text-sm text-brand-800">
+        <p role="alert" className="bg-brand-50 text-brand-800 rounded-xl p-4 text-sm">
           {state.reason === "rate-limited" ? s.errorTooMany : s.errorGeneric}
         </p>
       )}
-      <button type="submit" className="btn btn-primary w-full py-3 text-base sm:w-auto" disabled={!hydrated || pending}>
+      <button
+        type="submit"
+        className="btn btn-primary w-full py-3 text-base sm:w-auto"
+        disabled={!hydrated || pending}
+      >
         {pending ? dict.common.loading : s.submit}
       </button>
     </form>

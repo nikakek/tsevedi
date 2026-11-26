@@ -30,7 +30,18 @@ type Props = {
 };
 
 /** Accessible autocomplete (WAI-ARIA combobox pattern) over the places list. */
-export function PlaceCombobox({ label, placeholder, noMatches, places, locale, value, onChange, name, invalid, hideLabel }: Props) {
+export function PlaceCombobox({
+  label,
+  placeholder,
+  noMatches,
+  places,
+  locale,
+  value,
+  onChange,
+  name,
+  invalid,
+  hideLabel,
+}: Props) {
   const id = useId();
   const listId = `${id}-list`;
   const index = useMemo(() => buildPlaceIndex(places), [places]);
@@ -74,7 +85,10 @@ export function PlaceCombobox({ label, placeholder, noMatches, places, locale, v
         {label}
       </label>
       <div className="relative">
-        <MapPin className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" aria-hidden />
+        <MapPin
+          className="text-muted pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
+          aria-hidden
+        />
         <input
           ref={inputRef}
           id={id}
@@ -114,9 +128,9 @@ export function PlaceCombobox({ label, placeholder, noMatches, places, locale, v
           id={listId}
           role="listbox"
           aria-label={label}
-          className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-line bg-surface py-1 shadow-lg"
+          className="border-line bg-surface absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-xl border py-1 shadow-lg"
         >
-          {results.length === 0 && <li className="px-3 py-2 text-sm text-muted">{noMatches}</li>}
+          {results.length === 0 && <li className="text-muted px-3 py-2 text-sm">{noMatches}</li>}
           {results.map((place, i) => (
             <li
               key={place.slug}
@@ -126,10 +140,12 @@ export function PlaceCombobox({ label, placeholder, noMatches, places, locale, v
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => choose(place)}
               onMouseEnter={() => setActive(i)}
-              className="flex cursor-pointer items-baseline justify-between gap-3 px-3 py-2 aria-selected:bg-brand-50"
+              className="aria-selected:bg-brand-50 flex cursor-pointer items-baseline justify-between gap-3 px-3 py-2"
             >
               <span className="font-medium">{placeName(place, locale)}</span>
-              <span className="truncate text-xs text-muted">{regionName(place.region, locale)}</span>
+              <span className="text-muted truncate text-xs">
+                {regionName(place.region, locale)}
+              </span>
             </li>
           ))}
         </ul>

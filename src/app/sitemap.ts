@@ -8,7 +8,9 @@ function entry(build: (locale: Locale) => string, priority: number): MetadataRou
     url: `${SITE_URL}${build(locale)}`,
     changeFrequency: "weekly",
     priority,
-    alternates: { languages: Object.fromEntries(LOCALES.map((l) => [LOCALE_TAGS[l], `${SITE_URL}${build(l)}`])) },
+    alternates: {
+      languages: Object.fromEntries(LOCALES.map((l) => [LOCALE_TAGS[l], `${SITE_URL}${build(l)}`])),
+    },
   }));
 }
 

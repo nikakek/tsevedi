@@ -48,7 +48,10 @@ export function callForMePhrase({ toKa, fromKa }: PhraseInput): string[] {
 }
 
 /** Pre-filled WhatsApp / Viber message, in Georgian, sent from the traveller's phone. */
-export function messagePhrase({ toKa, fromKa, seats = 1 }: PhraseInput, dateLabel?: string): string {
+export function messagePhrase(
+  { toKa, fromKa, seats = 1 }: PhraseInput,
+  dateLabel?: string,
+): string {
   const route = fromKa ? `${kaFrom(fromKa)} ${kaLocative(toKa)}` : kaLocative(toKa);
   const when = dateLabel ? ` ${dateLabel}` : "";
   const seatText = seats > 1 ? `${seats} ადგილი` : "ერთი ადგილი";

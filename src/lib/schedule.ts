@@ -59,8 +59,10 @@ export function formatDays(days: number[], locale: Locale): string | null {
   if (ALL_DAYS.every((day) => days.includes(day))) return null;
   return toRanges(days)
     .map(([start, end]) => {
-      if (end - start >= 2) return `${weekdayName(start, locale, "short")}–${weekdayName(end, locale, "short")}`;
-      if (end > start) return `${weekdayName(start, locale, "short")}, ${weekdayName(end, locale, "short")}`;
+      if (end - start >= 2)
+        return `${weekdayName(start, locale, "short")}–${weekdayName(end, locale, "short")}`;
+      if (end > start)
+        return `${weekdayName(start, locale, "short")}, ${weekdayName(end, locale, "short")}`;
       return weekdayName(start, locale, "short");
     })
     .join(", ");
@@ -77,7 +79,9 @@ export function formatMonths(months: number[], locale: Locale): string | null {
   }
   return ranges
     .map(([start, end]) =>
-      start === end ? monthName(start, locale) : `${monthName(start, locale)}–${monthName(end, locale)}`,
+      start === end
+        ? monthName(start, locale)
+        : `${monthName(start, locale)}–${monthName(end, locale)}`,
     )
     .join(", ");
 }

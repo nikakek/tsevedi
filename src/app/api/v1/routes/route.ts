@@ -9,7 +9,8 @@ export async function GET(request: NextRequest) {
   const fromSlug = params.get("from");
   const toSlug = params.get("to");
   const date = params.get("date");
-  if (!fromSlug || !toSlug) return fail(400, "bad_request", "Query parameters `from` and `to` are required");
+  if (!fromSlug || !toSlug)
+    return fail(400, "bad_request", "Query parameters `from` and `to` are required");
   if (date && !isIsoDate(date)) return fail(400, "bad_request", "`date` must be YYYY-MM-DD");
 
   const [from, to] = await Promise.all([getPlaceBySlug(fromSlug), getPlaceBySlug(toSlug)]);

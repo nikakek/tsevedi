@@ -33,13 +33,26 @@ function Honeypot() {
 
 function Success({ text }: { text: string }) {
   return (
-    <p role="status" className="flex items-center gap-2 rounded-xl bg-emerald-50 p-4 text-emerald-800">
+    <p
+      role="status"
+      className="flex items-center gap-2 rounded-xl bg-emerald-50 p-4 text-emerald-800"
+    >
       <CheckCircle2 className="size-5" aria-hidden /> {text}
     </p>
   );
 }
 
-export function RideReportForm({ action, dict, validation, today }: { action: Action; dict: Dictionary["reports"]; validation: Dictionary["validation"]; today: string }) {
+export function RideReportForm({
+  action,
+  dict,
+  validation,
+  today,
+}: {
+  action: Action;
+  dict: Dictionary["reports"];
+  validation: Dictionary["validation"];
+  today: string;
+}) {
   const { state, pending, onSubmit, error } = useAction(action);
   const [open, setOpen] = useState(false);
   if (state.status === "success") return <Success text={dict.thanks} />;
@@ -57,11 +70,24 @@ export function RideReportForm({ action, dict, validation, today }: { action: Ac
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block text-sm font-medium">
           {dict.travelDate}
-          <input type="date" name="travelDate" defaultValue={today} max={today} className="field mt-1" aria-invalid={!!error("travelDate")} required />
+          <input
+            type="date"
+            name="travelDate"
+            defaultValue={today}
+            max={today}
+            className="field mt-1"
+            aria-invalid={!!error("travelDate")}
+            required
+          />
         </label>
         <label className="block text-sm font-medium">
           {dict.departedAt}
-          <input type="time" name="departedAt" className="field mt-1" aria-invalid={!!error("departedAt")} />
+          <input
+            type="time"
+            name="departedAt"
+            className="field mt-1"
+            aria-invalid={!!error("departedAt")}
+          />
         </label>
       </div>
       <fieldset>
@@ -69,7 +95,13 @@ export function RideReportForm({ action, dict, validation, today }: { action: Ac
         <div className="space-y-2">
           {RIDE_OUTCOMES.map((outcome) => (
             <label key={outcome} className="flex items-center gap-2 text-sm">
-              <input type="radio" name="outcome" value={outcome} defaultChecked={outcome === "WORKED"} className="accent-brand-600" />
+              <input
+                type="radio"
+                name="outcome"
+                value={outcome}
+                defaultChecked={outcome === "WORKED"}
+                className="accent-brand-600"
+              />
               {dict.outcomes[outcome]}
             </label>
           ))}
@@ -77,15 +109,24 @@ export function RideReportForm({ action, dict, validation, today }: { action: Ac
       </fieldset>
       <label className="block text-sm font-medium">
         {dict.pricePaid}
-        <input type="number" name="pricePaid" min={0} inputMode="numeric" className="field mt-1 max-w-40" aria-invalid={!!error("pricePaid")} />
+        <input
+          type="number"
+          name="pricePaid"
+          min={0}
+          inputMode="numeric"
+          className="field mt-1 max-w-40"
+          aria-invalid={!!error("pricePaid")}
+        />
       </label>
       <label className="block text-sm font-medium">
         {dict.comment}
         <textarea name="comment" rows={2} maxLength={500} className="field mt-1" />
       </label>
       {state.status === "error" && (
-        <p role="alert" className="text-sm text-brand-700">
-          {Object.values(state.errors).map((key) => validation[key]).join(" · ") || validation.required}
+        <p role="alert" className="text-brand-700 text-sm">
+          {Object.values(state.errors)
+            .map((key) => validation[key])
+            .join(" · ") || validation.required}
         </p>
       )}
       <button type="submit" className="btn btn-primary" disabled={pending}>
@@ -95,13 +136,23 @@ export function RideReportForm({ action, dict, validation, today }: { action: Ac
   );
 }
 
-export function ProblemReportForm({ action, dict }: { action: Action; dict: Dictionary["reports"] }) {
+export function ProblemReportForm({
+  action,
+  dict,
+}: {
+  action: Action;
+  dict: Dictionary["reports"];
+}) {
   const { state, pending, onSubmit } = useAction(action);
   const [open, setOpen] = useState(false);
   if (state.status === "success") return <Success text={dict.problemThanks} />;
   if (!open) {
     return (
-      <button type="button" className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink" onClick={() => setOpen(true)}>
+      <button
+        type="button"
+        className="text-muted hover:text-ink inline-flex items-center gap-1.5 text-sm"
+        onClick={() => setOpen(true)}
+      >
         <Flag className="size-4" aria-hidden /> {dict.problemTitle}
       </button>
     );
@@ -114,7 +165,13 @@ export function ProblemReportForm({ action, dict }: { action: Action; dict: Dict
         <div className="grid gap-2 sm:grid-cols-2">
           {PROBLEM_KINDS.map((kind, i) => (
             <label key={kind} className="flex items-center gap-2 text-sm">
-              <input type="radio" name="kind" value={kind} defaultChecked={i === 0} className="accent-brand-600" />
+              <input
+                type="radio"
+                name="kind"
+                value={kind}
+                defaultChecked={i === 0}
+                className="accent-brand-600"
+              />
               {dict.problems[kind]}
             </label>
           ))}

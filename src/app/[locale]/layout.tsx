@@ -42,7 +42,10 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   const dict = await getDictionary(locale);
 
   return (
-    <html lang={LOCALE_TAGS[locale]} className={`${inter.variable} ${georgian.variable} h-full antialiased`}>
+    <html
+      lang={LOCALE_TAGS[locale]}
+      className={`${inter.variable} ${georgian.variable} h-full antialiased`}
+    >
       <body className="flex min-h-full flex-col">
         <SiteHeader locale={locale} dict={dict} />
         <main className="flex-1">{children}</main>

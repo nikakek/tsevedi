@@ -90,7 +90,11 @@ export async function toggleRideReportAction(id: string, hidden: boolean) {
 
 export type EditState = { ok: boolean; errors: Record<string, ValidationKey | string> } | null;
 
-export async function updateListingAction(id: string, _: EditState, formData: FormData): Promise<EditState> {
+export async function updateListingAction(
+  id: string,
+  _: EditState,
+  formData: FormData,
+): Promise<EditState> {
   await requireAdmin();
   const text = (name: string) => {
     const value = formData.get(name);
@@ -108,17 +112,27 @@ export async function updateListingAction(id: string, _: EditState, formData: Fo
     vehicleColor: text("vehicleColor"),
     plate: text("plate"),
     seats: text("seats"),
-    stops: (text("stops") ?? "").split(",").map((s) => s.trim()).filter(Boolean),
+    stops: (text("stops") ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean),
     departureTime: text("departureTime"),
-    days: (text("days") ?? "").split(",").map((s) => s.trim()).filter(Boolean),
-    activeMonths: (text("activeMonths") ?? "").split(",").map((s) => s.trim()).filter(Boolean),
+    days: (text("days") ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean),
+    activeMonths: (text("activeMonths") ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean),
     departurePoint: text("departurePoint"),
     departureMapsUrl: text("departureMapsUrl"),
     returnTime: text("returnTime"),
     returnPoint: text("returnPoint"),
     pricePerSeat: text("pricePerSeat"),
     priceWholeVehicle: text("priceWholeVehicle"),
-    largeLuggage: text("largeLuggage") === "yes" ? true : text("largeLuggage") === "no" ? false : undefined,
+    largeLuggage:
+      text("largeLuggage") === "yes" ? true : text("largeLuggage") === "no" ? false : undefined,
     callAhead: formData.get("callAhead") === "on",
     notes: text("notes"),
   });
@@ -126,7 +140,8 @@ export async function updateListingAction(id: string, _: EditState, formData: Fo
   try {
     await updateListing(id, { ...parsed.data, adminNote: text("adminNote")?.trim() || undefined });
   } catch (error) {
-    if (error instanceof UnknownPlaceError) return { ok: false, errors: { stops: `Unknown: ${error.slugs.join(", ")}` } };
+    if (error instanceof UnknownPlaceError)
+      return { ok: false, errors: { stops: `Unknown: ${error.slugs.join(", ")}` } };
     throw error;
   }
   refresh(id);

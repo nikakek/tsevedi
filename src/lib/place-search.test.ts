@@ -3,11 +3,35 @@ import { buildPlaceIndex, editDistance, searchPlaces } from "./place-search";
 
 const places = [
   { slug: "tbilisi", nameKa: "თბილისი", nameEn: "Tbilisi", nameRu: "Тбилиси", aliases: ["Tiflis"] },
-  { slug: "tbilisi-airport", nameKa: "თბილისის აეროპორტი", nameEn: "Tbilisi Airport", nameRu: "Аэропорт Тбилиси", aliases: ["TBS"] },
-  { slug: "ambrolauri", nameKa: "ამბროლაური", nameEn: "Ambrolauri", nameRu: "Амбролаури", aliases: ["Racha"] },
+  {
+    slug: "tbilisi-airport",
+    nameKa: "თბილისის აეროპორტი",
+    nameEn: "Tbilisi Airport",
+    nameRu: "Аэропорт Тбилиси",
+    aliases: ["TBS"],
+  },
+  {
+    slug: "ambrolauri",
+    nameKa: "ამბროლაური",
+    nameEn: "Ambrolauri",
+    nameRu: "Амбролаури",
+    aliases: ["Racha"],
+  },
   { slug: "oni", nameKa: "ონი", nameEn: "Oni", nameRu: "Они", aliases: [] },
-  { slug: "stepantsminda", nameKa: "სტეფანწმინდა", nameEn: "Stepantsminda (Kazbegi)", nameRu: "Степанцминда (Казбеги)", aliases: ["Kazbegi"] },
-  { slug: "kvareli", nameKa: "ყვარელი", nameEn: "Kvareli", nameRu: "Кварели", aliases: ["Qvareli"] },
+  {
+    slug: "stepantsminda",
+    nameKa: "სტეფანწმინდა",
+    nameEn: "Stepantsminda (Kazbegi)",
+    nameRu: "Степанцминда (Казбеги)",
+    aliases: ["Kazbegi"],
+  },
+  {
+    slug: "kvareli",
+    nameKa: "ყვარელი",
+    nameEn: "Kvareli",
+    nameRu: "Кварели",
+    aliases: ["Qvareli"],
+  },
 ];
 const index = buildPlaceIndex(places);
 const slugs = (query: string) => searchPlaces(index, query).map((place) => place.slug);

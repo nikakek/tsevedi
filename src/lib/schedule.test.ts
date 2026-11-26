@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { formatDays, formatMonths, isIsoDate, isoWeekday, runsOn, todayInGeorgia } from "./schedule";
+import {
+  formatDays,
+  formatMonths,
+  isIsoDate,
+  isoWeekday,
+  runsOn,
+  todayInGeorgia,
+} from "./schedule";
 
 describe("isoWeekday", () => {
   it("returns 1 for Monday and 7 for Sunday", () => {

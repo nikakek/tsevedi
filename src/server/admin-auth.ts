@@ -9,7 +9,8 @@ const SESSION_DAYS = 7;
 
 function secret() {
   const value = process.env.SESSION_SECRET;
-  if (!value || value.length < 32) throw new Error("SESSION_SECRET must be set to at least 32 characters");
+  if (!value || value.length < 32)
+    throw new Error("SESSION_SECRET must be set to at least 32 characters");
   return value;
 }
 

@@ -3,7 +3,15 @@
 import "leaflet/dist/leaflet.css";
 import { useEffect, useRef } from "react";
 
-export type MapPlace = { slug: string; name: string; lat: number; lng: number; href: string; served: boolean; routes: number };
+export type MapPlace = {
+  slug: string;
+  name: string;
+  lat: number;
+  lng: number;
+  href: string;
+  served: boolean;
+  routes: number;
+};
 export type MapLine = Array<[number, number]>;
 
 const GEORGIA_BOUNDS: [[number, number], [number, number]] = [
@@ -12,7 +20,17 @@ const GEORGIA_BOUNDS: [[number, number], [number, number]] = [
 ];
 
 /** Leaflet + OpenStreetMap. Loaded only in the browser; markers are SVG circles (no image assets). */
-export function RoutesMap({ places, lines, openLabel, label }: { places: MapPlace[]; lines: MapLine[]; openLabel: string; label: string }) {
+export function RoutesMap({
+  places,
+  lines,
+  openLabel,
+  label,
+}: {
+  places: MapPlace[];
+  lines: MapLine[];
+  openLabel: string;
+  label: string;
+}) {
   const container = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -21,7 +39,9 @@ export function RoutesMap({ places, lines, openLabel, label }: { places: MapPlac
 
     import("leaflet").then((L) => {
       if (disposed || !container.current) return;
-      map = L.map(container.current, { scrollWheelZoom: false, zoomSnap: 0.5 }).fitBounds(GEORGIA_BOUNDS);
+      map = L.map(container.current, { scrollWheelZoom: false, zoomSnap: 0.5 }).fitBounds(
+        GEORGIA_BOUNDS,
+      );
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 18,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -58,5 +78,12 @@ export function RoutesMap({ places, lines, openLabel, label }: { places: MapPlac
     };
   }, [places, lines, openLabel]);
 
-  return <div ref={container} role="region" aria-label={label} className="h-[70dvh] min-h-96 w-full overflow-hidden rounded-2xl border border-line" />;
+  return (
+    <div
+      ref={container}
+      role="region"
+      aria-label={label}
+      className="border-line h-[70dvh] min-h-96 w-full overflow-hidden rounded-2xl border"
+    />
+  );
 }

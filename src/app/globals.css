@@ -73,7 +73,10 @@
   padding: 0.625rem 1rem;
   font-weight: 600;
   font-size: 0.9375rem;
-  transition: background-color 120ms, color 120ms, border-color 120ms;
+  transition:
+    background-color 120ms,
+    color 120ms,
+    border-color 120ms;
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;

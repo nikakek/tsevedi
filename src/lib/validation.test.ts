@@ -21,7 +21,11 @@ describe("listingSubmissionSchema", () => {
   });
 
   it("turns blank optional strings into undefined", () => {
-    const result = listingSubmissionSchema.parse({ ...valid, vehicleModel: "  ", pricePerSeat: "" });
+    const result = listingSubmissionSchema.parse({
+      ...valid,
+      vehicleModel: "  ",
+      pricePerSeat: "",
+    });
     expect(result.vehicleModel).toBeUndefined();
     expect(result.pricePerSeat).toBeUndefined();
   });
@@ -58,8 +62,14 @@ describe("listingSubmissionSchema", () => {
 
 describe("rideReportSchema", () => {
   it("requires a real date and a known outcome", () => {
-    expect(rideReportSchema.safeParse({ travelDate: "2026-07-01", outcome: "WORKED" }).success).toBe(true);
-    expect(rideReportSchema.safeParse({ travelDate: "2026-02-31", outcome: "WORKED" }).success).toBe(false);
-    expect(rideReportSchema.safeParse({ travelDate: "2026-07-01", outcome: "MAYBE" }).success).toBe(false);
+    expect(
+      rideReportSchema.safeParse({ travelDate: "2026-07-01", outcome: "WORKED" }).success,
+    ).toBe(true);
+    expect(
+      rideReportSchema.safeParse({ travelDate: "2026-02-31", outcome: "WORKED" }).success,
+    ).toBe(false);
+    expect(rideReportSchema.safeParse({ travelDate: "2026-07-01", outcome: "MAYBE" }).success).toBe(
+      false,
+    );
   });
 });

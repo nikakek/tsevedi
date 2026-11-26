@@ -10,7 +10,10 @@ export class UnknownPlaceError extends Error {
 
 /** Stores a submission as PENDING. Nothing becomes public until an admin approves it. */
 export async function createListingSubmission(input: ListingSubmission) {
-  const places = await db.place.findMany({ where: { slug: { in: input.stops } }, select: { id: true, slug: true } });
+  const places = await db.place.findMany({
+    where: { slug: { in: input.stops } },
+    select: { id: true, slug: true },
+  });
   const idBySlug = new Map(places.map((place) => [place.slug, place.id]));
   const unknown = input.stops.filter((slug) => !idBySlug.has(slug));
   if (unknown.length) throw new UnknownPlaceError(unknown);
@@ -55,7 +58,10 @@ export async function createListingSubmission(input: ListingSubmission) {
 }
 
 async function assertApproved(listingId: string) {
-  const listing = await db.listing.findFirst({ where: { id: listingId, status: "APPROVED" }, select: { id: true } });
+  const listing = await db.listing.findFirst({
+    where: { id: listingId, status: "APPROVED" },
+    select: { id: true },
+  });
   return !!listing;
 }
 

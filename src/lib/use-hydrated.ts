@@ -9,5 +9,9 @@ const subscribe = () => () => {};
  * before JavaScript loads can't trigger a native form GET (which would put the phone number in the URL).
  */
 export function useHydrated() {
-  return useSyncExternalStore(subscribe, () => true, () => false);
+  return useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
 }
