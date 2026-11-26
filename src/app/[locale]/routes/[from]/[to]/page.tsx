@@ -11,6 +11,7 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { formatDate, placeName, placeVars, t } from "@/i18n/format";
 import { toComboPlaces } from "@/lib/combo-places";
 import { paths } from "@/lib/paths";
+import { PAGE } from "@/lib/ui";
 import { isIsoDate } from "@/lib/schedule";
 import { getPlaceBySlug, getPlaces, searchRoutes } from "@/server/queries";
 
@@ -38,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default function RoutePage({ params, searchParams }: Props) {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6">
+    <div className={`${PAGE} py-6 md:py-8`}>
       <Suspense fallback={<ResultsSkeleton />}>
         <RouteResults params={params} searchParams={searchParams} />
       </Suspense>
@@ -64,24 +65,26 @@ async function RouteResults({ params, searchParams }: Pick<Props, "params" | "se
 
   return (
     <>
-      <SearchForm
-        locale={locale}
-        dict={dict.search}
-        places={toComboPlaces(places)}
-        initialFrom={from}
-        initialTo={to}
-        initialDate={date}
-      />
+      <div className="max-w-5xl">
+        <SearchForm
+          locale={locale}
+          dict={dict.search}
+          places={toComboPlaces(places)}
+          initialFrom={from}
+          initialTo={to}
+          initialDate={date}
+        />
+      </div>
 
-      <header className="mt-6 mb-4">
-        <h1 className="text-2xl font-semibold tracking-tight">
+      <header className="mt-8 mb-5">
+        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
           {t(dict.route.heading, {
             from: placeName(fromPlace, locale),
             to: placeName(toPlace, locale),
           })}
         </h1>
         {results.length > 0 && (
-          <p className="text-muted">
+          <p className="text-muted mt-1">
             {date && <>{t(dict.route.showingDate, { date: formatDate(date, locale) })} · </>}
             {running.length === 1
               ? dict.route.resultsOne
@@ -101,51 +104,71 @@ async function RouteResults({ params, searchParams }: Pick<Props, "params" | "se
         )}
       </header>
 
-      {results.length === 0 ? (
-        <EmptyState locale={locale} dict={dict} from={from} to={to} reverseCount={reverseCount} />
-      ) : (
-        <div className="space-y-4">
-          {running.map((r) => (
-            <ListingCard
-              key={`${r.listing.id}-${r.match.direction}`}
-              listing={r.listing}
-              match={r.match}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-8 xl:grid-cols-[minmax(0,1fr)_24rem]">
+        <div>
+          {results.length === 0 ? (
+            <EmptyState
               locale={locale}
               dict={dict}
+              from={from}
+              to={to}
+              reverseCount={reverseCount}
             />
-          ))}
-          {notRunning.length > 0 && date && (
-            <>
-              <h2 className="text-muted pt-4 text-sm font-semibold uppercase">
-                {t(dict.route.notOnDate, { date: formatDate(date, locale) })}
-              </h2>
-              {notRunning.map((r) => (
+          ) : (
+            <div className="grid gap-4 2xl:grid-cols-2">
+              {running.map((r) => (
                 <ListingCard
                   key={`${r.listing.id}-${r.match.direction}`}
                   listing={r.listing}
                   match={r.match}
                   locale={locale}
                   dict={dict}
-                  dimmed
                 />
               ))}
-            </>
+              {notRunning.length > 0 && date && (
+                <>
+                  <h2 className="text-muted pt-4 text-sm font-semibold uppercase 2xl:col-span-2">
+                    {t(dict.route.notOnDate, { date: formatDate(date, locale) })}
+                  </h2>
+                  {notRunning.map((r) => (
+                    <ListingCard
+                      key={`${r.listing.id}-${r.match.direction}`}
+                      listing={r.listing}
+                      match={r.match}
+                      locale={locale}
+                      dict={dict}
+                      dimmed
+                    />
+                  ))}
+                </>
+              )}
+            </div>
           )}
-          <aside className="flex gap-3 rounded-2xl bg-amber-50 p-4 text-sm text-amber-900">
+        </div>
+
+        <aside className="space-y-4 lg:sticky lg:top-28 lg:self-start">
+          <div className="bg-warn-bg text-warn-fg flex gap-3 rounded-[1.75rem] p-5 text-sm">
             <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
             <p>
               <strong>{dict.route.tipTitle}: </strong>
               {dict.route.tip}
             </p>
-          </aside>
-        </div>
-      )}
-
-      <p className="mt-8 text-sm">
-        <Link href={paths.place(locale, fromPlace.slug)} className="text-brand-700 hover:underline">
-          {t(dict.route.seeAlso, placeVars(fromPlace, locale))} →
-        </Link>
-      </p>
+          </div>
+          <div className="card space-y-3 p-5">
+            <Link href={paths.place(locale, fromPlace.slug)} className="btn btn-secondary w-full">
+              {t(dict.route.seeAlso, placeVars(fromPlace, locale))}
+            </Link>
+            {results.length > 0 && (
+              <Link
+                href={paths.add(locale, from, to)}
+                className="text-brand-700 block px-1 text-[15px] font-medium hover:underline"
+              >
+                {dict.route.addCta} →
+              </Link>
+            )}
+          </div>
+        </aside>
+      </div>
     </>
   );
 }

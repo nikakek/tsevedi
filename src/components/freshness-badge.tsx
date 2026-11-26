@@ -21,7 +21,7 @@ export function FreshnessBadge({
   }
   if (freshness === "fresh") {
     return (
-      <span className="inline-flex items-center gap-1 text-xs text-emerald-700">
+      <span className="text-ok-fg inline-flex items-center gap-1 text-xs">
         <CircleCheck className="size-3.5" aria-hidden />
         {daysAgo === 0
           ? dict.verifiedToday
@@ -32,7 +32,7 @@ export function FreshnessBadge({
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 text-xs text-amber-700">
+    <span className="text-warn-fg inline-flex items-center gap-1 text-xs">
       <CircleAlert className="size-3.5" aria-hidden /> {t(dict.stale, { count: daysAgo })}
     </span>
   );

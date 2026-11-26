@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -7,6 +8,7 @@ import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { toComboPlaces } from "@/lib/combo-places";
 import { paths } from "@/lib/paths";
+import { PAGE } from "@/lib/ui";
 import { getPlaces } from "@/server/queries";
 import { submitListingAction } from "../actions";
 
@@ -28,9 +30,21 @@ export default async function AddPage({ params, searchParams }: Props) {
   if (!isLocale(locale)) notFound();
   const dict = await getDictionary(locale);
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8">
-      <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{dict.submit.title}</h1>
-      <p className="text-muted mt-2 mb-6">{dict.submit.intro}</p>
+    <div
+      className={`${PAGE} grid gap-8 py-8 lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-12 xl:grid-cols-[24rem_minmax(0,1fr)]`}
+    >
+      <div className="lg:sticky lg:top-28 lg:self-start">
+        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{dict.submit.title}</h1>
+        <p className="text-muted mt-3">{dict.submit.intro}</p>
+        <ul className="mt-6 hidden space-y-3 text-sm lg:block">
+          {dict.home.driversPoints.map((point) => (
+            <li key={point} className="flex items-start gap-2.5">
+              <Check className="text-ok-fg mt-0.5 size-4 shrink-0" aria-hidden />
+              {point}
+            </li>
+          ))}
+        </ul>
+      </div>
       <Suspense fallback={<PageSkeleton />}>
         <AddForm locale={locale} searchParams={searchParams} />
       </Suspense>

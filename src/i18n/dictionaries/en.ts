@@ -1,7 +1,7 @@
 const en = {
   meta: {
     siteName: "Tsevedi",
-    title: "Tsevedi: marshrutkas and shared rides across Georgia",
+    title: "Tsevedi: find transport to anywhere in Georgia",
     description:
       "Find marshrutkas, minivans and shared cars between Georgian towns and villages. Departure times, prices, where they leave from and the driver's phone number. Free.",
     routeTitle: "{from} to {to} marshrutka: times, prices, driver phone",
@@ -19,11 +19,14 @@ const en = {
     aboutShort: "About",
     mapShort: "Map",
     language: "Language",
+    themeSystem: "Theme: automatic",
+    themeLight: "Theme: light",
+    themeDark: "Theme: dark",
   },
   home: {
-    heroTitle: "Get anywhere in Georgia by marshrutka",
+    heroTitle: "Find your ride to anywhere in Georgia",
     heroSubtitle:
-      "Times, prices and drivers' phone numbers for the minibuses and shared cars between Georgian towns and villages. The stuff that is usually only known locally.",
+      "Marshrutkas, minivans and shared cars between Georgian towns and villages: when they leave, what they cost, where to wait and the driver's phone number.",
     popularTitle: "Routes on Tsevedi",
     popularEmpty: "No routes have been added yet. Be the first to add one.",
     howTitle: "How it works",
@@ -251,7 +254,7 @@ const en = {
     region: "Region",
   },
   map: {
-    title: "Marshrutka route map of Georgia",
+    title: "Route map of Georgia",
     intro: "Every route on Tsevedi on one map. Tap a town to see its routes.",
     routesFrom: "Routes",
     open: "Open",

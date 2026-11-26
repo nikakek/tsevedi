@@ -42,7 +42,7 @@ export function PhraseCardButton({ content }: { content: PhraseCardContent }) {
                   type="button"
                   aria-selected={tab === key}
                   onClick={() => setTab(key)}
-                  className="text-muted aria-selected:bg-ink rounded-full px-4 py-2 text-sm font-medium aria-selected:text-white"
+                  className="text-muted aria-selected:bg-ink aria-selected:text-canvas rounded-full px-4 py-2 text-sm font-medium"
                 >
                   {content[key].title}
                 </button>

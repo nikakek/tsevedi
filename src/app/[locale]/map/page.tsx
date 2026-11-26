@@ -5,6 +5,7 @@ import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { placeName } from "@/i18n/format";
 import { paths } from "@/lib/paths";
+import { PAGE } from "@/lib/ui";
 import { getApprovedListings, getPlaces } from "@/server/queries";
 
 type Props = PageProps<"/[locale]/map">;
@@ -50,7 +51,7 @@ export default async function MapPage({ params }: Props) {
   );
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
+    <div className={`${PAGE} py-8`}>
       <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{dict.map.title}</h1>
       <p className="text-muted mt-2 mb-6">{dict.map.intro}</p>
       <RoutesMap

@@ -198,7 +198,7 @@ export function ListingCard({
               </span>
             )}
             {months && (
-              <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs text-amber-800">
+              <span className="bg-warn-bg text-warn-fg rounded-full px-2 py-0.5 text-xs">
                 {dict.listing.season}: {months}
               </span>
             )}
@@ -255,7 +255,7 @@ export function ListingCard({
             </>
           )}
         </p>
-        {listing.callAhead && <p className="text-amber-800">{dict.listing.callAhead}</p>}
+        {listing.callAhead && <p className="text-warn-fg">{dict.listing.callAhead}</p>}
         <FreshnessBadge
           freshness={listing.freshness}
           daysAgo={listing.verifiedDaysAgo}

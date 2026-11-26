@@ -33,10 +33,7 @@ function Honeypot() {
 
 function Success({ text }: { text: string }) {
   return (
-    <p
-      role="status"
-      className="flex items-center gap-2 rounded-xl bg-emerald-50 p-4 text-emerald-800"
-    >
+    <p role="status" className="bg-ok-bg text-ok-fg flex items-center gap-2 rounded-xl p-4">
       <CheckCircle2 className="size-5" aria-hidden /> {text}
     </p>
   );

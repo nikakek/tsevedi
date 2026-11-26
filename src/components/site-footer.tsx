@@ -3,6 +3,7 @@ import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { GITHUB_URL, paths } from "@/lib/paths";
 import { LanguageSwitcher } from "./language-switcher";
+import { PAGE } from "@/lib/ui";
 
 export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const links = [
@@ -12,7 +13,7 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary 
     { href: GITHUB_URL, label: dict.footer.openSource },
   ];
   return (
-    <footer className="mx-auto mt-20 w-full max-w-[75rem] px-4 pb-28 md:px-10 md:pb-12">
+    <footer className={`${PAGE} mt-20 pb-28 md:pb-12`}>
       <LanguageSwitcher locale={locale} label={dict.nav.language} align="left" direction="up" />
       <p className="text-muted mt-5 text-sm">
         © {dict.meta.siteName} · tsevedi.ge · {dict.footer.tagline}

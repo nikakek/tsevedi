@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Dark mode follows data-theme on <html>, set before first paint by ThemeScript. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @theme {
   --font-sans:
     var(--font-sans-flex), var(--font-sans-intl), "Noto Sans Georgian", ui-sans-serif, system-ui,
@@ -23,12 +26,50 @@
   --color-subtle: #71717a;
   --color-line: #e4e4e7;
   --color-line-strong: #d4d4d8;
+  --color-hover: #fafafa;
+  --color-line-hover: #a1a1aa;
+  /* Dark feature panels stay dark in both themes. */
+  --color-panel: #18181b;
+
+  /* Status colours */
+  --color-warn-bg: #fffbeb;
+  --color-warn-fg: #92400e;
+  --color-ok-bg: #ecfdf5;
+  --color-ok-fg: #047857;
 
   --color-whatsapp: #1f9d55;
   --color-viber: #7360f2;
   --color-telegram: #229ed9;
 
   --shadow-float: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 32px -12px rgb(0 0 0 / 0.18);
+}
+
+/* Dark theme: the same tokens with dark values, so every utility adapts automatically. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-surface: #18181b;
+  --color-canvas: #09090b;
+  --color-ink: #fafafa;
+  --color-muted: #a1a1aa;
+  --color-subtle: #8b8b94;
+  --color-line: #27272a;
+  --color-line-strong: #3f3f46;
+  --color-hover: #27272a;
+  --color-line-hover: #52525b;
+  --color-panel: #1c1c20;
+
+  --color-brand-50: #2a1214;
+  --color-brand-100: #3a1518;
+  --color-brand-200: #5b1d22;
+  --color-brand-700: #f87171;
+  --color-brand-800: #fca5a5;
+
+  --color-warn-bg: #2a1f0b;
+  --color-warn-fg: #fcd34d;
+  --color-ok-bg: #0b2a1f;
+  --color-ok-fg: #6ee7b7;
+
+  --shadow-float: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -12px rgb(0 0 0 / 0.7);
 }
 
 @layer base {
@@ -115,8 +156,8 @@
   color: var(--color-ink);
   border-color: var(--color-line-strong);
   &:hover:not(:disabled) {
-    background: #fafafa;
-    border-color: #a1a1aa;
+    background: var(--color-hover);
+    border-color: var(--color-line-hover);
   }
 }
 
@@ -134,8 +175,8 @@
   font-weight: 500;
   color: var(--color-ink);
   &:hover {
-    background: #fafafa;
-    border-color: #a1a1aa;
+    background: var(--color-hover);
+    border-color: var(--color-line-hover);
   }
 }
 
@@ -144,4 +185,28 @@
   font-size: 0.8125rem;
   font-weight: 500;
   color: var(--color-subtle);
+}
+
+/* Leaflet: keep its stacking inside the map, and darken tiles in dark mode. */
+.leaflet-container {
+  isolation: isolate;
+  font: inherit;
+}
+
+[data-theme="dark"] .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.85) saturate(0.6);
+}
+
+[data-theme="dark"] .leaflet-popup-content-wrapper,
+[data-theme="dark"] .leaflet-popup-tip,
+[data-theme="dark"] .leaflet-bar a,
+[data-theme="dark"] .leaflet-tooltip {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  border-color: var(--color-line);
+}
+
+[data-theme="dark"] .leaflet-control-attribution {
+  background: rgb(24 24 27 / 0.8);
+  color: var(--color-muted);
 }

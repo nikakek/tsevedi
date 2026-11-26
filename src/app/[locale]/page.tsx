@@ -7,9 +7,11 @@ import { getDictionary, type Dictionary } from "@/i18n/dictionaries";
 import { placeName, t } from "@/i18n/format";
 import { toComboPlaces } from "@/lib/combo-places";
 import { paths } from "@/lib/paths";
+import { PAGE } from "@/lib/ui";
 import {
   getApprovedListings,
   getPlaces,
+  getRoutePairs,
   type ListingView,
   type PlaceSummary,
 } from "@/server/queries";
@@ -29,10 +31,11 @@ const STARTER_PLACES = [
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  const [dict, places, allListings] = await Promise.all([
+  const [dict, places, allListings, pairs] = await Promise.all([
     getDictionary(locale),
     getPlaces(),
     getApprovedListings(),
+    getRoutePairs(),
   ]);
   const listings = allListings.filter((listing) => listing.freshness !== "expired");
 
@@ -54,8 +57,8 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     .slice(0, 4);
 
   return (
-    <div className="mx-auto max-w-[75rem] px-4 md:px-10">
-      <section className="grid gap-10 pt-10 md:pt-14 lg:grid-cols-[minmax(0,1fr)_29.5rem] lg:gap-12">
+    <div className={PAGE}>
+      <section className="grid gap-10 pt-10 md:pt-14 lg:grid-cols-[minmax(0,1fr)_28rem] lg:gap-12 xl:grid-cols-[minmax(0,1fr)_34rem] 2xl:gap-20">
         <div>
           <h1 className="text-[2.75rem] leading-[1.02] font-semibold tracking-[-0.035em] text-balance md:text-[3.5rem] lg:text-[clamp(2.75rem,4.4vw,4rem)] [&:lang(ka)]:tracking-normal">
             {dict.home.heroTitle}
@@ -90,7 +93,30 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         <RecentCard locale={locale} dict={dict} recent={recent} />
       </section>
 
-      <section className="bg-ink mt-16 rounded-[2rem] p-8 text-white md:p-10">
+      {pairs.length > 0 && (
+        <section className="mt-16">
+          <h2 className="text-2xl font-semibold tracking-tight">{dict.home.popularTitle}</h2>
+          <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+            {pairs.slice(0, 16).map((pair) => (
+              <li key={`${pair.from.slug}-${pair.to.slug}`}>
+                <Link
+                  href={paths.route(locale, pair.from.slug, pair.to.slug)}
+                  className="card hover:border-line-hover flex min-h-16 items-center gap-2 px-5 py-3 font-medium"
+                >
+                  <span className="min-w-0">{placeName(pair.from, locale)}</span>
+                  <ArrowRight className="text-subtle size-4 shrink-0" aria-hidden />
+                  <span className="min-w-0">{placeName(pair.to, locale)}</span>
+                  {pair.minPrice !== null && (
+                    <span className="text-muted ml-auto shrink-0 text-sm">{pair.minPrice}₾</span>
+                  )}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section className="bg-panel ring-line mt-16 rounded-[2rem] p-8 text-white ring-1 md:p-10">
         <div className="flex flex-col gap-8 md:flex-row md:items-center">
           <div className="flex-1">
             <p className="text-sm font-medium text-white/60">{dict.home.driversEyebrow}</p>

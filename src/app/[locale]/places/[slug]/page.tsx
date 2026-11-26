@@ -8,6 +8,7 @@ import { isLocale, LOCALE_TAGS, LOCALES, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { placeName, placeVars, t } from "@/i18n/format";
 import { paths } from "@/lib/paths";
+import { PAGE } from "@/lib/ui";
 import { regionName } from "@/lib/regions";
 import { getPlaceBySlug, getPlaceRoutes, type PlaceSummary } from "@/server/queries";
 
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default function PlacePage({ params }: Props) {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className={`${PAGE} py-8`}>
       <Suspense fallback={<PageSkeleton />}>
         <PlaceContent params={params} />
       </Suspense>
@@ -54,7 +55,7 @@ function RouteList({
 }) {
   if (places.length === 0) return null;
   return (
-    <section className="card mt-6 overflow-hidden">
+    <section className="card overflow-hidden">
       <h2 className="px-5 pt-5 pb-4 text-xl font-semibold tracking-tight">{title}</h2>
       <ul>
         {places
@@ -97,14 +98,14 @@ async function PlaceContent({ params }: Pick<Props, "params">) {
         {t(dict.place.heading, vars)}
       </h1>
       {destinations.length === 0 && origins.length === 0 ? (
-        <div className="card mt-6 p-6 text-center">
+        <div className="card mt-8 max-w-2xl p-8 text-center">
           <p className="text-muted">{t(dict.place.none, vars)}</p>
           <Link href={paths.add(locale)} className="btn btn-primary mt-4">
             {dict.nav.add}
           </Link>
         </div>
       ) : (
-        <>
+        <div className="mt-8 grid gap-6 lg:grid-cols-2 lg:items-start">
           <RouteList
             locale={locale}
             title={t(dict.place.from, vars)}
@@ -118,7 +119,7 @@ async function PlaceContent({ params }: Pick<Props, "params">) {
             places={origins}
             reverse
           />
-        </>
+        </div>
       )}
     </>
   );

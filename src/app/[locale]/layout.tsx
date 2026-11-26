@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { ThemeScript } from "@/components/theme";
 import { isLocale, LOCALE_TAGS, LOCALES } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { SITE_URL } from "@/lib/paths";
@@ -13,7 +14,10 @@ export function generateStaticParams() {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#d0202a",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f4f4f5" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+  ],
 };
 
 export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Promise<Metadata> {
@@ -39,7 +43,14 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   const dict = await getDictionary(locale);
 
   return (
-    <html lang={LOCALE_TAGS[locale]} className={`${fontVariables} h-full antialiased`}>
+    <html
+      lang={LOCALE_TAGS[locale]}
+      className={`${fontVariables} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <head>
+        <ThemeScript />
+      </head>
       <body className="flex min-h-full flex-col">
         <SiteHeader locale={locale} dict={dict} />
         <main className="flex-1">{children}</main>

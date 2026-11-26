@@ -94,7 +94,7 @@ export function TabBar(props: Props) {
   return (
     <nav
       aria-label="Main"
-      className="bg-surface/95 shadow-float fixed inset-x-3 bottom-3 z-40 grid grid-cols-4 rounded-full p-1.5 ring-1 ring-black/5 backdrop-blur md:hidden"
+      className="bg-surface/95 shadow-float ring-line fixed inset-x-3 bottom-3 z-40 grid grid-cols-4 rounded-full p-1.5 ring-1 backdrop-blur md:hidden"
     >
       <Suspense fallback={<TabLinks {...props} pathname={null} />}>
         <WithPath render={(pathname) => <TabLinks {...props} pathname={pathname} />} />

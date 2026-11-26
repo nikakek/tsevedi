@@ -192,9 +192,7 @@ function ListingSummary({ listing, knownDriver }: { listing: AdminListing; known
           <Phone className="size-3.5" aria-hidden /> {formatPhone(driver.phone)}
         </a>
         {knownDriver && (
-          <span className="ml-2 rounded bg-emerald-50 px-1.5 text-xs text-emerald-700">
-            known driver
-          </span>
+          <span className="bg-ok-bg text-ok-fg ml-2 rounded px-1.5 text-xs">known driver</span>
         )}
       </p>
       <p className="text-muted">

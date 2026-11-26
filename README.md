@@ -4,7 +4,7 @@
 
 # Tsevedi · წევედი
 
-**Marshrutkas and shared rides between Georgian towns and villages: departure times, prices, where they leave from and the driver's phone number. In Georgian, English and Russian.**
+**Find your ride to anywhere in Georgia. Marshrutkas, minivans and shared cars between towns and villages: departure times, prices, where they leave from and the driver's phone number. In Georgian, English and Russian.**
 
 [![CI](https://github.com/nikakek/tsevedi/actions/workflows/ci.yml/badge.svg)](https://github.com/nikakek/tsevedi/actions/workflows/ci.yml)
 ![Next.js 16](https://img.shields.io/badge/Next.js-16-black)
@@ -21,6 +21,10 @@
   <img src="docs/screenshots/results-mobile.png" width="32%" alt="Search results on a phone" />
   <img src="docs/screenshots/georgian-card-mobile.png" width="32%" alt="Full-screen Georgian phrase card" />
   <img src="docs/screenshots/home-ka-mobile.png" width="32%" alt="Homepage in Georgian" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/results-dark.png" width="100%" alt="Search results in dark mode" />
 </p>
 
 <sub>Screenshots use demo listings.</sub>
@@ -48,6 +52,8 @@ villages.
   and eventually hidden.
 - **Date-aware.** Weekday and seasonal schedules (e.g. Tusheti jeeps, June to September only).
 - **National route map** of every listed route (Leaflet + OpenStreetMap).
+- **Light and dark mode.** Follows the system setting by default, with a toggle in the header, and no flash of the wrong theme on load.
+- **Responsive layouts.** Full width with sidebars on desktop; a stacked search bar and a bottom tab bar on phones.
 - **Trilingual and SEO-ready.** `/ka`, `/en`, `/ru` with browser language detection, hreflang alternates, a sitemap
   of every route page and Open Graph images.
 - **Moderation dashboard** with tap-to-call verification, a freshness queue, an editor, and problem and ride-report

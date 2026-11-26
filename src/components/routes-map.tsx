@@ -83,7 +83,7 @@ export function RoutesMap({
       ref={container}
       role="region"
       aria-label={label}
-      className="border-line h-[70dvh] min-h-96 w-full overflow-hidden rounded-2xl border"
+      className="border-line h-[75dvh] min-h-96 w-full overflow-hidden rounded-2xl border"
     />
   );
 }
