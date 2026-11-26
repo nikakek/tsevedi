@@ -7,6 +7,7 @@ import "server-only";
 const windows = new Map<string, { count: number; resetAt: number }>();
 
 export function rateLimit(key: string, limit: number, windowMs: number): boolean {
+  if (process.env.DISABLE_RATE_LIMIT === "1") return true;
   const now = Date.now();
   const entry = windows.get(key);
   if (!entry || entry.resetAt <= now) {
@@ -18,6 +19,13 @@ export function rateLimit(key: string, limit: number, windowMs: number): boolean
   }
   entry.count++;
   return entry.count <= limit;
+}
+
+/** True if `key` has already used up its budget, without counting this call. */
+export function isLimited(key: string, limit: number): boolean {
+  if (process.env.DISABLE_RATE_LIMIT === "1") return false;
+  const entry = windows.get(key);
+  return !!entry && entry.resetAt > Date.now() && entry.count >= limit;
 }
 
 export function clientIp(headers: Headers): string {
