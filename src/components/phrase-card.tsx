@@ -42,7 +42,7 @@ export function PhraseCardButton({ content }: { content: PhraseCardContent }) {
                   type="button"
                   aria-selected={tab === key}
                   onClick={() => setTab(key)}
-                  className="text-muted aria-selected:bg-ink rounded-lg px-3 py-1.5 text-sm font-medium aria-selected:text-white"
+                  className="text-muted aria-selected:bg-ink rounded-full px-4 py-2 text-sm font-medium aria-selected:text-white"
                 >
                   {content[key].title}
                 </button>
@@ -51,7 +51,7 @@ export function PhraseCardButton({ content }: { content: PhraseCardContent }) {
             <button
               type="button"
               onClick={() => dialog.current?.close()}
-              className="hover:bg-canvas rounded-lg p-2"
+              className="hover:bg-canvas rounded-full p-2.5"
               aria-label={content.closeLabel}
             >
               <X className="size-5" aria-hidden />
@@ -70,11 +70,14 @@ export function PhraseCardButton({ content }: { content: PhraseCardContent }) {
               ))}
             </p>
             {tab === "staff" && (
-              <p className="text-brand-700 text-3xl font-bold tracking-wide" dir="ltr">
+              <p
+                className="text-brand-700 text-3xl font-semibold tracking-tight tracking-wide md:text-4xl"
+                dir="ltr"
+              >
                 {content.staff.phone}
               </p>
             )}
-            <div className="bg-canvas text-muted rounded-xl p-4 text-sm">
+            <div className="bg-canvas text-muted rounded-2xl p-4 text-sm">
               <span className="text-ink font-semibold">{content.meaningLabel}: </span>
               {card.meaning}
             </div>

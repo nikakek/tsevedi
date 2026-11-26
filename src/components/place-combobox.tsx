@@ -27,6 +27,8 @@ type Props = {
   name?: string;
   invalid?: boolean;
   hideLabel?: boolean;
+  /** "bare" drops the border so the input can sit inside a larger search bar. */
+  variant?: "field" | "bare";
 };
 
 /** Accessible autocomplete (WAI-ARIA combobox pattern) over the places list. */
@@ -41,7 +43,9 @@ export function PlaceCombobox({
   name,
   invalid,
   hideLabel,
+  variant = "field",
 }: Props) {
+  const bare = variant === "bare";
   const id = useId();
   const listId = `${id}-list`;
   const index = useMemo(() => buildPlaceIndex(places), [places]);
@@ -81,12 +85,15 @@ export function PlaceCombobox({
 
   return (
     <div className="relative">
-      <label htmlFor={id} className={hideLabel ? "sr-only" : "mb-1 block text-sm font-medium"}>
+      <label
+        htmlFor={id}
+        className={hideLabel || bare ? "sr-only" : "mb-1.5 block text-sm font-medium"}
+      >
         {label}
       </label>
       <div className="relative">
         <MapPin
-          className="text-muted pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
+          className={`pointer-events-none absolute top-1/2 size-5 -translate-y-1/2 ${invalid ? "text-brand-600" : "text-subtle"} ${bare ? "left-4" : "left-3.5"}`}
           aria-hidden
         />
         <input
@@ -102,7 +109,11 @@ export function PlaceCombobox({
           autoComplete="off"
           spellCheck={false}
           placeholder={placeholder}
-          className="field pl-9"
+          className={
+            bare
+              ? "placeholder:text-subtle focus-visible:bg-canvas min-h-14 w-full rounded-full bg-transparent pr-14 pl-12 text-base outline-none md:pr-3 md:text-[17px]"
+              : "field pl-11"
+          }
           value={text}
           onChange={(event) => {
             setQuery(event.target.value);
@@ -128,9 +139,9 @@ export function PlaceCombobox({
           id={listId}
           role="listbox"
           aria-label={label}
-          className="border-line bg-surface absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-xl border py-1 shadow-lg"
+          className="border-line bg-surface shadow-float absolute z-30 mt-2 max-h-80 w-full min-w-64 overflow-auto rounded-2xl border p-1.5"
         >
-          {results.length === 0 && <li className="text-muted px-3 py-2 text-sm">{noMatches}</li>}
+          {results.length === 0 && <li className="text-muted px-3 py-2.5 text-sm">{noMatches}</li>}
           {results.map((place, i) => (
             <li
               key={place.slug}
@@ -140,7 +151,7 @@ export function PlaceCombobox({
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => choose(place)}
               onMouseEnter={() => setActive(i)}
-              className="aria-selected:bg-brand-50 flex cursor-pointer items-baseline justify-between gap-3 px-3 py-2"
+              className="aria-selected:bg-canvas flex cursor-pointer items-baseline justify-between gap-3 rounded-xl px-3 py-2.5"
             >
               <span className="font-medium">{placeName(place, locale)}</span>
               <span className="text-muted truncate text-xs">

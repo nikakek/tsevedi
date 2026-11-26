@@ -96,7 +96,7 @@ export function SubmitForm({
     return (
       <div className="card p-8 text-center" role="status">
         <CheckCircle2 className="mx-auto size-12 text-emerald-600" aria-hidden />
-        <h2 className="mt-3 text-xl font-bold">{s.successTitle}</h2>
+        <h2 className="mt-3 text-xl font-semibold tracking-tight">{s.successTitle}</h2>
         <p className="text-muted mx-auto mt-2 max-w-md">{s.successText}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -258,7 +258,7 @@ export function SubmitForm({
                   defaultChecked
                   className="peer sr-only"
                 />
-                <span className="border-line peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-800 peer-focus-visible:ring-brand-600 block rounded-lg border px-3 py-1.5 text-sm peer-focus-visible:ring-2">
+                <span className="border-line-strong bg-surface peer-checked:border-ink peer-checked:bg-ink peer-focus-visible:ring-brand-600 flex min-h-10 items-center rounded-full border px-4 text-sm font-medium peer-checked:text-white peer-focus-visible:ring-2">
                   {weekdayName(day, locale, "short")}
                 </span>
               </label>
@@ -287,7 +287,7 @@ export function SubmitForm({
                     value={month}
                     className="peer sr-only"
                   />
-                  <span className="border-line peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-800 peer-focus-visible:ring-brand-600 block rounded-lg border px-2 py-1.5 text-center text-sm peer-focus-visible:ring-2">
+                  <span className="border-line-strong bg-surface peer-checked:border-ink peer-checked:bg-ink peer-focus-visible:ring-brand-600 flex min-h-10 items-center justify-center rounded-full border px-2 text-sm font-medium peer-checked:text-white peer-focus-visible:ring-2">
                     {new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(
                       new Date(Date.UTC(2024, month - 1, 1)),
                     )}
@@ -429,7 +429,7 @@ export function SubmitForm({
                   defaultChecked={type === "MARSHRUTKA"}
                   className="peer sr-only"
                 />
-                <span className="border-line peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-800 peer-focus-visible:ring-brand-600 block rounded-lg border px-3 py-1.5 text-sm peer-focus-visible:ring-2">
+                <span className="border-line-strong bg-surface peer-checked:border-ink peer-checked:bg-ink peer-focus-visible:ring-brand-600 flex min-h-10 items-center rounded-full border px-4 text-sm font-medium peer-checked:text-white peer-focus-visible:ring-2">
                   {dict.vehicle[type]}
                 </span>
               </label>
@@ -507,7 +507,7 @@ export function SubmitForm({
       </Section>
 
       {state.status === "error" && (
-        <p role="alert" className="bg-brand-50 text-brand-800 rounded-xl p-4 text-sm">
+        <p role="alert" className="bg-brand-50 text-brand-800 rounded-2xl p-4 text-sm">
           {state.reason === "rate-limited" ? s.errorTooMany : s.errorGeneric}
         </p>
       )}

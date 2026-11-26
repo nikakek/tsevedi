@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeftRight, Search } from "lucide-react";
+import { ArrowUpDown, CalendarDays, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Locale } from "@/i18n/config";
@@ -16,9 +16,12 @@ type Props = {
   initialFrom?: string | null;
   initialTo?: string | null;
   initialDate?: string | null;
-  compact?: boolean;
 };
 
+/**
+ * One rounded search bar on desktop. On phones the two places stack in a card and
+ * the date and search button sit underneath as pills.
+ */
 export function SearchForm({
   locale,
   dict,
@@ -26,7 +29,6 @@ export function SearchForm({
   initialFrom = null,
   initialTo = null,
   initialDate = null,
-  compact,
 }: Props) {
   const router = useRouter();
   const [from, setFrom] = useState<string | null>(initialFrom);
@@ -45,68 +47,74 @@ export function SearchForm({
     router.push(paths.route(locale, from, to, date || null));
   }
 
+  const combo = { noMatches: dict.noMatches, places, locale, variant: "bare" as const };
+
   return (
-    <form
-      onSubmit={submit}
-      className={compact ? "card p-3" : "card p-4 shadow-sm sm:p-5"}
-      noValidate
-    >
-      <div className="grid gap-3 sm:grid-cols-[1fr_auto_1fr_10rem_auto] sm:items-end">
-        <PlaceCombobox
-          label={dict.from}
-          placeholder={dict.fromPlaceholder}
-          noMatches={dict.noMatches}
-          places={places}
-          locale={locale}
-          value={from}
-          onChange={setFrom}
-          invalid={error && !from}
-        />
-        <button
-          type="button"
-          onClick={() => {
-            setFrom(to);
-            setTo(from);
-          }}
-          className="btn btn-secondary justify-self-center px-3 sm:mb-px"
-          aria-label={dict.swap}
-          title={dict.swap}
-        >
-          <ArrowLeftRight className="size-4 rotate-90 sm:rotate-0" aria-hidden />
-        </button>
-        <PlaceCombobox
-          label={dict.to}
-          placeholder={dict.toPlaceholder}
-          noMatches={dict.noMatches}
-          places={places}
-          locale={locale}
-          value={to}
-          onChange={setTo}
-          invalid={error && !to}
-        />
-        <div>
-          <label htmlFor="search-date" className="mb-1 block text-sm font-medium">
-            {dict.date}
-          </label>
-          <input
-            id="search-date"
-            type="date"
-            className="field"
-            value={date}
-            onChange={(event) => setDate(event.target.value)}
-            aria-describedby="search-date-hint"
-          />
-          <span id="search-date-hint" className="sr-only">
-            {dict.anyDay}
-          </span>
+    <form onSubmit={submit} noValidate>
+      <div className="md:bg-surface md:shadow-float md:ring-line md:flex md:items-center md:gap-1 md:rounded-full md:p-1.5 md:ring-1">
+        <div className="bg-surface shadow-float ring-line relative flex flex-col rounded-[1.75rem] ring-1 md:flex-1 md:flex-row md:items-center md:rounded-none md:bg-transparent md:shadow-none md:ring-0">
+          <div className="md:flex-1">
+            <PlaceCombobox
+              {...combo}
+              label={dict.from}
+              placeholder={dict.from}
+              value={from}
+              onChange={setFrom}
+              invalid={error && !from}
+            />
+          </div>
+          <div className="bg-line mx-4 h-px md:mx-0 md:hidden" aria-hidden />
+          <button
+            type="button"
+            onClick={() => {
+              setFrom(to);
+              setTo(from);
+            }}
+            className="border-line-strong bg-surface text-muted hover:text-ink absolute top-1/2 right-3 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border md:static md:size-9 md:translate-y-0 md:rotate-90"
+            aria-label={dict.swap}
+            title={dict.swap}
+          >
+            <ArrowUpDown className="size-4" aria-hidden />
+          </button>
+          <div className="md:flex-1">
+            <PlaceCombobox
+              {...combo}
+              label={dict.to}
+              placeholder={dict.to}
+              value={to}
+              onChange={setTo}
+              invalid={error && !to}
+            />
+          </div>
         </div>
-        <button type="submit" className="btn btn-primary h-[2.875rem]" disabled={!hydrated}>
-          <Search className="size-4" aria-hidden />
-          {dict.submit}
-        </button>
+        <div className="mt-2 flex gap-2 md:mt-0 md:gap-1.5">
+          <label className="bg-surface ring-line-strong md:before:bg-line relative flex min-h-12 flex-1 items-center rounded-full ring-1 md:w-44 md:flex-none md:ring-0 md:before:absolute md:before:inset-y-2 md:before:left-0 md:before:w-px">
+            <span className="sr-only">{dict.date}</span>
+            <CalendarDays
+              className="text-subtle pointer-events-none absolute left-4 size-5"
+              aria-hidden
+            />
+            <input
+              type="date"
+              className="focus-visible:bg-canvas min-h-12 w-full rounded-full bg-transparent pr-3 pl-12 text-[15px] outline-none"
+              value={date}
+              onChange={(event) => setDate(event.target.value)}
+              aria-label={dict.date}
+              title={dict.anyDay}
+            />
+          </label>
+          <button
+            type="submit"
+            className="btn btn-primary min-h-12 flex-1 px-7 text-base md:flex-none"
+            disabled={!hydrated}
+          >
+            <Search className="size-4" aria-hidden />
+            {dict.submit}
+          </button>
+        </div>
       </div>
       {error && (
-        <p role="alert" className="text-brand-700 mt-2 text-sm">
+        <p role="alert" className="text-brand-700 mt-3 px-2 text-sm">
           {dict.pickBoth}
         </p>
       )}

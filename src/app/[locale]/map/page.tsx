@@ -51,7 +51,7 @@ export default async function MapPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="text-3xl font-bold">{dict.map.title}</h1>
+      <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{dict.map.title}</h1>
       <p className="text-muted mt-2 mb-6">{dict.map.intro}</p>
       <RoutesMap
         places={mapPlaces}

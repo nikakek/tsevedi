@@ -138,7 +138,8 @@ test("a traveller reports a ride and switches language", async ({ page }) => {
   await page.getByRole("button", { name: "Send report" }).click();
   await expect(page.getByText("Thank you! Your report helps the next traveller.")).toBeVisible();
 
-  await page.getByRole("link", { name: "ქა" }).click();
+  await page.locator("summary[aria-label=Language]").first().click();
+  await page.getByRole("link", { name: "ქართული" }).first().click();
   await expect(page).toHaveURL(/\/ka\/listings\//);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("თბილისი → ონი");
 });

@@ -55,7 +55,7 @@ async function ListingContent({ params }: Pick<Props, "params">) {
       >
         <ArrowLeft className="size-4" aria-hidden /> {dict.listing.backToRoute}
       </Link>
-      <h1 className="mb-4 text-2xl font-bold">
+      <h1 className="mb-4 text-2xl font-semibold tracking-tight">
         {t(dict.route.heading, { from: placeName(board, locale), to: placeName(alight, locale) })}
       </h1>
 
@@ -108,7 +108,7 @@ async function ListingContent({ params }: Pick<Props, "params">) {
       </section>
 
       <section className="mt-8">
-        <h2 className="mb-3 text-lg font-bold">{dict.reports.title}</h2>
+        <h2 className="mb-3 text-lg font-semibold">{dict.reports.title}</h2>
         {listing.rideReports.length === 0 ? (
           <p className="text-muted mb-4">{dict.reports.empty}</p>
         ) : (

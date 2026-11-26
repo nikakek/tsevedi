@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -54,22 +54,23 @@ function RouteList({
 }) {
   if (places.length === 0) return null;
   return (
-    <section className="mt-6">
-      <h2 className="mb-3 text-lg font-semibold">{title}</h2>
-      <ul className="grid gap-2 sm:grid-cols-2">
+    <section className="card mt-6 overflow-hidden">
+      <h2 className="px-5 pt-5 pb-4 text-xl font-semibold tracking-tight">{title}</h2>
+      <ul>
         {places
           .toSorted((a, b) => placeName(a, locale).localeCompare(placeName(b, locale)))
           .map((other) => {
             const [a, b] = reverse ? [other, from] : [from, other];
             return (
-              <li key={other.id}>
+              <li key={other.id} className="border-line border-t">
                 <Link
                   href={paths.route(locale, a.slug, b.slug)}
-                  className="card hover:border-brand-200 hover:bg-brand-50 flex items-center gap-2 px-4 py-3"
+                  className="hover:bg-canvas/60 flex items-center gap-2 px-5 py-4"
                 >
                   <span>{placeName(a, locale)}</span>
-                  <ArrowRight className="text-muted size-4" aria-hidden />
-                  <span className="font-medium">{placeName(b, locale)}</span>
+                  <ArrowRight className="text-subtle size-4" aria-hidden />
+                  <span className="font-semibold">{placeName(b, locale)}</span>
+                  <ChevronRight className="text-subtle ml-auto size-4" aria-hidden />
                 </Link>
               </li>
             );
@@ -92,7 +93,9 @@ async function PlaceContent({ params }: Pick<Props, "params">) {
       <p className="text-muted text-sm">
         {dict.place.region}: {regionName(place.region, locale)}
       </p>
-      <h1 className="text-3xl font-bold">{t(dict.place.heading, vars)}</h1>
+      <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
+        {t(dict.place.heading, vars)}
+      </h1>
       {destinations.length === 0 && origins.length === 0 ? (
         <div className="card mt-6 p-6 text-center">
           <p className="text-muted">{t(dict.place.none, vars)}</p>

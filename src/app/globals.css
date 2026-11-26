@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-inter), var(--font-georgian), ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    var(--font-sans-flex), var(--font-sans-intl), "Noto Sans Georgian", ui-sans-serif, system-ui,
+    sans-serif;
 
   /* Brand: Georgian flag red */
   --color-brand-50: #fef2f2;
@@ -13,15 +15,20 @@
   --color-brand-800: #8f171d;
   --color-brand-900: #77181d;
 
+  /* Neutrals (zinc) */
   --color-surface: #ffffff;
-  --color-canvas: #f7f5f2;
-  --color-ink: #1c1917;
-  --color-muted: #6b6560;
-  --color-line: #e7e3de;
+  --color-canvas: #f4f4f5;
+  --color-ink: #18181b;
+  --color-muted: #52525b;
+  --color-subtle: #71717a;
+  --color-line: #e4e4e7;
+  --color-line-strong: #d4d4d8;
 
   --color-whatsapp: #1f9d55;
   --color-viber: #7360f2;
   --color-telegram: #229ed9;
+
+  --shadow-float: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 32px -12px rgb(0 0 0 / 0.18);
 }
 
 @layer base {
@@ -39,25 +46,32 @@
     outline: 2px solid var(--color-brand-600);
     outline-offset: 2px;
   }
+
+  /* Tight tracking looks great in Latin but cramps Georgian script. */
+  :lang(ka) .tracking-tight,
+  :lang(ka) .tracking-tighter {
+    letter-spacing: normal;
+  }
 }
 
 @utility card {
-  border-radius: 1rem;
+  border-radius: 1.75rem;
   border: 1px solid var(--color-line);
   background: var(--color-surface);
 }
 
 @utility field {
   width: 100%;
-  border-radius: 0.75rem;
-  border: 1px solid var(--color-line);
+  min-height: 3rem;
+  border-radius: 1rem;
+  border: 1px solid var(--color-line-strong);
   background: var(--color-surface);
-  padding: 0.625rem 0.875rem;
+  padding: 0.625rem 1rem;
   font-size: 1rem;
   &:focus {
     outline: none;
-    border-color: var(--color-brand-600);
-    box-shadow: 0 0 0 3px var(--color-brand-100);
+    border-color: var(--color-ink);
+    box-shadow: 0 0 0 3px var(--color-line);
   }
   &[aria-invalid="true"] {
     border-color: var(--color-brand-600);
@@ -69,10 +83,13 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 0.75rem;
-  padding: 0.625rem 1rem;
+  min-height: 2.75rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  padding: 0.375rem 1.25rem;
   font-weight: 600;
   font-size: 0.9375rem;
+  white-space: nowrap;
   transition:
     background-color 120ms,
     color 120ms,
@@ -85,17 +102,46 @@
 
 @utility btn-primary {
   background: var(--color-brand-600);
+  border-color: var(--color-brand-600);
   color: white;
   &:hover:not(:disabled) {
     background: var(--color-brand-700);
+    border-color: var(--color-brand-700);
   }
 }
 
 @utility btn-secondary {
   background: var(--color-surface);
   color: var(--color-ink);
-  border: 1px solid var(--color-line);
+  border-color: var(--color-line-strong);
   &:hover:not(:disabled) {
-    border-color: var(--color-muted);
+    background: #fafafa;
+    border-color: #a1a1aa;
   }
+}
+
+/* Rounded link pill, e.g. "Kutaisi 7". */
+@utility chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2.75rem;
+  border-radius: 9999px;
+  border: 1px solid var(--color-line-strong);
+  background: var(--color-surface);
+  padding: 0 0.875rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-ink);
+  &:hover {
+    background: #fafafa;
+    border-color: #a1a1aa;
+  }
+}
+
+/* Small grey label above a heading. */
+@utility eyebrow {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-subtle);
 }

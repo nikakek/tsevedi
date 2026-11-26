@@ -23,7 +23,11 @@ export function FreshnessBadge({
     return (
       <span className="inline-flex items-center gap-1 text-xs text-emerald-700">
         <CircleCheck className="size-3.5" aria-hidden />
-        {daysAgo === 0 ? dict.verifiedToday : t(dict.verifiedDays, { count: daysAgo })}
+        {daysAgo === 0
+          ? dict.verifiedToday
+          : daysAgo === 1
+            ? dict.verifiedYesterday
+            : t(dict.verifiedDays, { count: daysAgo })}
       </span>
     );
   }

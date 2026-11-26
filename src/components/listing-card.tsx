@@ -167,7 +167,9 @@ export function ListingCard({
     <article className={`card overflow-hidden ${dimmed ? "opacity-60" : ""}`}>
       <div className="flex flex-wrap items-start gap-x-4 gap-y-2 p-4 sm:p-5">
         <div className="min-w-[5.5rem]">
-          <div className="text-3xl font-bold tabular-nums">{trip.time}</div>
+          <div className="text-3xl font-semibold tracking-tight tabular-nums md:text-4xl">
+            {trip.time}
+          </div>
           <div className="text-muted flex items-center gap-1 text-xs">
             <Clock className="size-3" aria-hidden />
             {days}
@@ -210,7 +212,7 @@ export function ListingCard({
         <div className="text-right">
           {listing.pricePerSeat !== null ? (
             <>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-semibold tracking-tight">
                 {listing.pricePerSeat}
                 <span className="ml-0.5 text-lg">{dict.listing.gel}</span>
               </div>
@@ -261,7 +263,7 @@ export function ListingCard({
         />
       </div>
 
-      <div className="border-line bg-canvas/50 flex flex-wrap gap-2 border-t px-4 py-3 sm:px-5">
+      <div className="border-line flex flex-wrap gap-2 border-t px-4 py-4 sm:px-5">
         <ContactButtons
           listing={listing}
           board={trip.board}

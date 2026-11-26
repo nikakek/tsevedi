@@ -71,11 +71,10 @@ async function RouteResults({ params, searchParams }: Pick<Props, "params" | "se
         initialFrom={from}
         initialTo={to}
         initialDate={date}
-        compact
       />
 
       <header className="mt-6 mb-4">
-        <h1 className="text-2xl font-bold">
+        <h1 className="text-2xl font-semibold tracking-tight">
           {t(dict.route.heading, {
             from: placeName(fromPlace, locale),
             to: placeName(toPlace, locale),

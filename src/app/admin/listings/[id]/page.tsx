@@ -32,7 +32,7 @@ async function Editor({ params }: Pick<PageProps<"/admin/listings/[id]">, "param
 
   return (
     <>
-      <h1 className="mb-1 text-2xl font-bold">
+      <h1 className="mb-1 text-2xl font-semibold tracking-tight">
         {listing.stops.map((s) => s.place.nameEn).join(" → ")}
       </h1>
       <p className="text-muted mb-6 text-sm">Status: {listing.status}</p>

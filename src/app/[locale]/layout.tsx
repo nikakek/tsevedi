@@ -1,15 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Noto_Sans_Georgian } from "next/font/google";
 import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { isLocale, LOCALE_TAGS, LOCALES } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { SITE_URL } from "@/lib/paths";
+import { fontVariables } from "../fonts";
 import "../globals.css";
-
-const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-inter" });
-const georgian = Noto_Sans_Georgian({ subsets: ["georgian"], variable: "--font-georgian" });
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
@@ -42,10 +39,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   const dict = await getDictionary(locale);
 
   return (
-    <html
-      lang={LOCALE_TAGS[locale]}
-      className={`${inter.variable} ${georgian.variable} h-full antialiased`}
-    >
+    <html lang={LOCALE_TAGS[locale]} className={`${fontVariables} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <SiteHeader locale={locale} dict={dict} />
         <main className="flex-1">{children}</main>

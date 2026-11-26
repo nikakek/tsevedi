@@ -66,7 +66,7 @@ async function Dashboard({ searchParams }: Pick<PageProps<"/admin">, "searchPara
   return (
     <>
       <header className="mb-6 flex flex-wrap items-center gap-3">
-        <h1 className="mr-auto text-2xl font-bold">Tsevedi admin</h1>
+        <h1 className="mr-auto text-2xl font-semibold tracking-tight">Tsevedi admin</h1>
         <Link href="/en" className="btn btn-secondary">
           <ExternalLink className="size-4" aria-hidden /> Site
         </Link>
