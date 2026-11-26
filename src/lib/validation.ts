@@ -64,12 +64,12 @@ export const listingSubmissionSchema = z
     plate: optionalText(15),
     seats: optionalInt(1, 70),
     stops: z
-      .array(z.string().trim().min(1))
+      .array(z.string().trim().min(1), { error: "stops" })
       .min(2, { error: "stops" })
       .max(12, { error: "tooLong" })
       .refine((stops) => new Set(stops).size === stops.length, { error: "duplicateStops" }),
     departureTime: time,
-    days: z.array(z.coerce.number().int().min(1).max(7)).min(1, { error: "days" }),
+    days: z.array(z.coerce.number().int().min(1).max(7), { error: "days" }).min(1, { error: "days" }),
     activeMonths: z.array(z.coerce.number().int().min(1).max(12)).default([]),
     departurePoint: text(200),
     departureMapsUrl: z.preprocess(
