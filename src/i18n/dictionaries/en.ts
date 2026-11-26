@@ -7,7 +7,7 @@ const en = {
     routeTitle: "{from} to {to} marshrutka: times, prices, driver phone",
     routeDescription:
       "How to get from {from} to {to} by marshrutka or shared car: departure times, prices, where it leaves from and the driver's number.",
-    placeTitle: "Marshrutkas to and from {place}",
+    placeTitle: "Transport to and from {place}",
     placeDescription: "All known marshrutka and shared-car routes to and from {place}, Georgia.",
   },
   nav: {
@@ -19,9 +19,8 @@ const en = {
     aboutShort: "About",
     mapShort: "Map",
     language: "Language",
-    themeSystem: "Theme: automatic",
-    themeLight: "Theme: light",
-    themeDark: "Theme: dark",
+    themeToLight: "Switch to light mode",
+    themeToDark: "Switch to dark mode",
   },
   home: {
     heroTitle: "Find your ride to anywhere in Georgia",
@@ -247,7 +246,7 @@ const en = {
     errorTooMany: "Too many submissions. Please try again later.",
   },
   place: {
-    heading: "Marshrutkas to and from {place}",
+    heading: "Transport to and from {place}",
     from: "From {place}",
     to: "To {place}",
     none: "No routes listed for {place} yet.",

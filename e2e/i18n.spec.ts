@@ -19,3 +19,20 @@ test("unknown routes and places show a not-found page", async ({ page }) => {
   await page.goto("/en/routes/tbilisi/atlantis");
   await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
 });
+
+test("dark mode survives switching language and reloading", async ({ page }) => {
+  await page.goto("/en/places/ambrolauri");
+  const html = page.locator("html");
+  await page.getByRole("button", { name: /dark mode/i }).click();
+  await expect(html).toHaveAttribute("data-theme", "dark");
+
+  await page.locator("summary[aria-label=Language]").first().click();
+  await page.getByRole("link", { name: "ქართული" }).first().click();
+  await expect(page).toHaveURL(/\/ka\/places\/ambrolauri$/);
+  await expect(html).toHaveAttribute("data-theme", "dark");
+
+  await page.reload();
+  await expect(html).toHaveAttribute("data-theme", "dark");
+  await page.getByRole("button", { name: "ღია რეჟიმზე გადართვა" }).click();
+  await expect(html).toHaveAttribute("data-theme", "light");
+});

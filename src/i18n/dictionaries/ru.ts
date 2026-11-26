@@ -9,7 +9,7 @@ const ru: Dictionary = {
     routeTitle: "Маршрутка {from} – {to}: расписание, цены, телефон водителя",
     routeDescription:
       "Как доехать из {from} в {to} на маршрутке или машине: время отправления, цена, откуда отходит и номер водителя.",
-    placeTitle: "Маршрутки в {place} и обратно",
+    placeTitle: "Транспорт в {place} и обратно",
     placeDescription: "Все известные маршрутки и машины в {place} и из {place}, Грузия.",
   },
   nav: {
@@ -21,9 +21,8 @@ const ru: Dictionary = {
     aboutShort: "О нас",
     mapShort: "Карта",
     language: "Язык",
-    themeSystem: "Тема: автоматически",
-    themeLight: "Тема: светлая",
-    themeDark: "Тема: тёмная",
+    themeToLight: "Включить светлую тему",
+    themeToDark: "Включить тёмную тему",
   },
   home: {
     heroTitle: "Найдите транспорт в любой уголок Грузии",
@@ -250,7 +249,7 @@ const ru: Dictionary = {
     errorTooMany: "Слишком много заявок. Попробуйте позже.",
   },
   place: {
-    heading: "Маршрутки: {place}",
+    heading: "Транспорт в {place} и обратно",
     from: "Из {place}",
     to: "В {place}",
     none: "Для {place} маршрутов пока нет.",

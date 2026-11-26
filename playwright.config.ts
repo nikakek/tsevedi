@@ -10,6 +10,8 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "list",
+  // Locally the dev server compiles pages on first visit, so allow more time than in CI.
+  expect: { timeout: process.env.CI ? 5_000 : 15_000 },
   use: { baseURL, trace: "retain-on-failure", locale: "en-US" },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ThemeScript } from "@/components/theme";
+import { ThemeScript, ThemeSync } from "@/components/theme";
 import { fontVariables } from "../fonts";
 import "../globals.css";
 
@@ -14,7 +14,10 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
       <head>
         <ThemeScript />
       </head>
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        <ThemeSync locale="en" />
+        {children}
+      </body>
     </html>
   );
 }

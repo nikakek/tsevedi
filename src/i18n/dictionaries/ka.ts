@@ -9,7 +9,7 @@ const ka: Dictionary = {
     routeTitle: "{from} – {to} მარშრუტკა: გასვლის დრო, ფასი, მძღოლის ნომერი",
     routeDescription:
       "როგორ ჩავიდე {fromAbl} {toLoc} მარშრუტკით ან მანქანით: გასვლის დრო, ფასი, საიდან გადის და მძღოლის ნომერი.",
-    placeTitle: "მარშრუტკები: {place}",
+    placeTitle: "ტრანსპორტი: {place}",
     placeDescription: "ყველა ცნობილი მარშრუტკა და მანქანა {placeLoc} და {placeAbl}.",
   },
   nav: {
@@ -21,9 +21,8 @@ const ka: Dictionary = {
     aboutShort: "შესახებ",
     mapShort: "რუკა",
     language: "ენა",
-    themeSystem: "თემა: ავტომატური",
-    themeLight: "თემა: ღია",
-    themeDark: "თემა: მუქი",
+    themeToLight: "ღია რეჟიმზე გადართვა",
+    themeToDark: "მუქ რეჟიმზე გადართვა",
   },
   home: {
     heroTitle: "იპოვე ტრანსპორტი საქართველოს ნებისმიერ კუთხეში",
@@ -250,7 +249,7 @@ const ka: Dictionary = {
     errorTooMany: "ძალიან ბევრი განაცხადი. სცადე მოგვიანებით.",
   },
   place: {
-    heading: "მარშრუტკები: {place}",
+    heading: "ტრანსპორტი: {place}",
     from: "{placeAbl}",
     to: "{placeLoc}",
     none: "{place}: მარშრუტები ჯერ არ დამატებულა.",

@@ -30,11 +30,7 @@ export function SiteHeader({ locale, dict }: { locale: Locale; dict: Dictionary 
             <HeaderNav locale={locale} labels={labels} />
             <div className="flex items-center justify-end gap-2 md:flex-1">
               <ThemeToggle
-                labels={{
-                  system: dict.nav.themeSystem,
-                  light: dict.nav.themeLight,
-                  dark: dict.nav.themeDark,
-                }}
+                labels={{ toLight: dict.nav.themeToLight, toDark: dict.nav.themeToDark }}
               />
               <LanguageSwitcher locale={locale} label={dict.nav.language} />
             </div>

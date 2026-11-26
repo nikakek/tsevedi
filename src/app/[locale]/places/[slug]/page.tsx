@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default function PlacePage({ params }: Props) {
   return (
-    <div className={`${PAGE} py-8`}>
+    <div className={`${PAGE} py-10`}>
       <Suspense fallback={<PageSkeleton />}>
         <PlaceContent params={params} />
       </Suspense>
@@ -91,14 +91,16 @@ async function PlaceContent({ params }: Pick<Props, "params">) {
 
   return (
     <>
-      <p className="text-muted text-sm">
-        {dict.place.region}: {regionName(place.region, locale)}
-      </p>
-      <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-        {t(dict.place.heading, vars)}
-      </h1>
+      <header className="mx-auto max-w-3xl text-center">
+        <p className="text-muted text-sm">
+          {dict.place.region}: {regionName(place.region, locale)}
+        </p>
+        <h1 className="mt-1 text-3xl font-semibold tracking-tight text-balance md:text-5xl">
+          {t(dict.place.heading, vars)}
+        </h1>
+      </header>
       {destinations.length === 0 && origins.length === 0 ? (
-        <div className="card mt-8 max-w-2xl p-8 text-center">
+        <div className="card mx-auto mt-8 max-w-2xl p-8 text-center">
           <p className="text-muted">{t(dict.place.none, vars)}</p>
           <Link href={paths.add(locale)} className="btn btn-primary mt-4">
             {dict.nav.add}
