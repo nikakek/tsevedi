@@ -186,27 +186,3 @@
   font-weight: 500;
   color: var(--color-subtle);
 }
-
-/* Leaflet: keep its stacking inside the map, and darken tiles in dark mode. */
-.leaflet-container {
-  isolation: isolate;
-  font: inherit;
-}
-
-[data-theme="dark"] .leaflet-tile-pane {
-  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.85) saturate(0.6);
-}
-
-[data-theme="dark"] .leaflet-popup-content-wrapper,
-[data-theme="dark"] .leaflet-popup-tip,
-[data-theme="dark"] .leaflet-bar a,
-[data-theme="dark"] .leaflet-tooltip {
-  background: var(--color-surface);
-  color: var(--color-ink);
-  border-color: var(--color-line);
-}
-
-[data-theme="dark"] .leaflet-control-attribution {
-  background: rgb(24 24 27 / 0.8);
-  color: var(--color-muted);
-}
